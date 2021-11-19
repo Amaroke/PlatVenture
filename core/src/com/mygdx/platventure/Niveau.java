@@ -19,7 +19,7 @@ public class Niveau {
         tableau = new char[largeur][hauteur];
         for(int i = 1; i<hauteur+1;++i){
             for(int j = 0; j<largeur-1; ++j){
-                tableau[j][i] = tabString[i].charAt(j);
+                tableau[j][i-1] = tabString[i].charAt(j);
             }
         }
 
