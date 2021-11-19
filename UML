@@ -1,0 +1,43 @@
+@startuml
+class PlatVenture extends ApplicationAdapter {
+-int niveauActuel
+-int score
+-{static}int fps
+-{static}int gravite
++SpriteBatch batch
++Texture img
+}
+
+class Niveau {
+-int largeur
+-int longueur
+-int temps
+}
+
+abstract class Element {
+}
+
+class Personnage extends Element{
+-int largeur
+-int densite
+-int restitution
+-int friction
+}
+class Plateforme extends Element
+abstract class Joyau extends Element{
+-int points
+}
+class JoyauJaune extends Joyau
+class JoyauRouge extends Joyau
+class Sortie extends Element
+class Brique extends Element{
+-int densite
+-int restitution
+-int friction
+}
+class Eau extends Element
+
+PlatVenture -- "1" OrthographicCamera
+PlatVenture -- "1" Niveau
+Niveau -- "*" Element
+@enduml
