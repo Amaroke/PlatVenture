@@ -8,11 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import java.io.File;
-
 public class PlatVenture extends Game {
 	SpriteBatch listeAff;
-	ShapeRenderer shapeRenderer;
 	Texture font;
 	OrthographicCamera camera;
 	Niveau niveau;
@@ -20,7 +17,6 @@ public class PlatVenture extends Game {
 	@Override
 	public void create () {
 		listeAff = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
 		setScreen(new EcranPresentation(this));
 	}
 
@@ -36,7 +32,6 @@ public class PlatVenture extends Game {
 	@Override
 	public void dispose () {
 		listeAff.dispose();
-		shapeRenderer.dispose();
 		font.dispose();
 	}
 
