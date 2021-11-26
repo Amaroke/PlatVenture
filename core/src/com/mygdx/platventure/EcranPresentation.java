@@ -2,21 +2,25 @@ package com.mygdx.platventure;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Timer;
 
 public class EcranPresentation extends ScreenAdapter {
     final PlatVenture game;
+    final Texture font;
 
     public EcranPresentation(PlatVenture game) {
         this.game = game;
-        this.game.setFont(new Texture("images/Intro.png"));
+        font = new Texture("images/Intro.png");
     }
 
     @Override
-    public void show(){
-        Timer.schedule(new Timer.Task(){
+    public void show() {
+        Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/win.ogg"));
+        music.play();
+        Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 game.setScreen(new EcranJeu(game));
@@ -26,10 +30,11 @@ public class EcranPresentation extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, .25f, 0, 1);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.listeAff.begin();
-        game.listeAff.end();
+        game.getListeAff().begin();
+        game.getListeAff().draw(this.font, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        game.getListeAff().end();
     }
 
     @Override
