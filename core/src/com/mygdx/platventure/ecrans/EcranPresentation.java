@@ -41,7 +41,7 @@ public class EcranPresentation extends ScreenAdapter {
     }
 
     @Override
-    public void hide(){
+    public void hide() {
         Gdx.input.setInputProcessor(null);
     }
 }
