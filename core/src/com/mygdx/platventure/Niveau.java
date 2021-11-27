@@ -16,7 +16,7 @@ public class Niveau {
         temps = Integer.parseInt(tabString0[2]);
         tableau = new char[largeur][hauteur];
         for (int i = 1; i < hauteur + 1; ++i) {
-            for (int j = 0; j < largeur - 1; ++j) {
+            for (int j = 0; j < largeur; ++j) {
                 tableau[j][i - 1] = tabString[i].charAt(j);
             }
         }
