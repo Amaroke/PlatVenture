@@ -1,4 +1,4 @@
-package com.mygdx.platventure;
+package com.mygdx.platventure.ecrans;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -6,12 +6,13 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Timer;
+import com.mygdx.platventure.PlatVentureGame;
 
 public class EcranPresentation extends ScreenAdapter {
-    final PlatVenture game;
+    final PlatVentureGame game;
     final Texture font;
 
-    public EcranPresentation(PlatVenture game) {
+    public EcranPresentation(PlatVentureGame game) {
         this.game = game;
         font = new Texture("images/Intro.png");
     }

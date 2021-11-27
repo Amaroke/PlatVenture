@@ -1,26 +1,40 @@
-package com.mygdx.platventure;
+package com.mygdx.platventure.ecrans;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.mygdx.platventure.Niveau;
+import com.mygdx.platventure.PlatVentureGame;
 
 public class EcranJeu extends ScreenAdapter {
 
-    final PlatVenture game;
-    final Texture font;
+    final private PlatVentureGame game;
+    final private Texture font;
+
     private final OrthographicCamera camera;
     private final FitViewport vp;
 
-    public EcranJeu(PlatVenture game) {
+    private final Box2DDebugRenderer debugRenderer;
+
+    private final World world;
+
+    public EcranJeu(PlatVentureGame game) {
         this.game = game;
         this.font = new Texture("images/Back.png");
         this.game.setNiveau(new Niveau("levels/level_001.txt"));
+
         camera = new OrthographicCamera();
         vp = new FitViewport(16f, (16f * Gdx.graphics.getHeight()) / Gdx.graphics.getWidth(), camera);
         vp.apply();
+
+        debugRenderer = new Box2DDebugRenderer(true, true, false, true, true, true);
+
+        world = game.getWorld();
     }
 
     @Override
