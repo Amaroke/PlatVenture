@@ -6,21 +6,23 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.platventure.PlatVentureGame;
+import com.mygdx.platventure.PlatVenture;
 
 public class EcranPresentation extends ScreenAdapter {
-    final PlatVentureGame game;
+    final PlatVenture game;
     final Texture font;
 
-    public EcranPresentation(PlatVentureGame game) {
+    public EcranPresentation(PlatVenture game) {
         this.game = game;
         font = new Texture("images/Intro.png");
     }
 
     @Override
     public void show() {
+        //On joue le son en début de partie
         Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/win.ogg"));
         music.play();
+        //On attends 3 secondes pour passer à l'écran suivant
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
