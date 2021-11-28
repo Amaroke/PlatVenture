@@ -14,6 +14,8 @@ import com.mygdx.platventure.elements.briques.BriqueF;
 import com.mygdx.platventure.elements.briques.BriqueG;
 import com.mygdx.platventure.elements.briques.BriqueH;
 import com.mygdx.platventure.elements.briques.BriqueI;
+import com.mygdx.platventure.elements.gemmes.Gemme1;
+import com.mygdx.platventure.elements.gemmes.Gemme2;
 import com.mygdx.platventure.elements.plateformes.PlateformeJ;
 import com.mygdx.platventure.elements.plateformes.PlateformeK;
 import com.mygdx.platventure.elements.plateformes.PlateformeL;
@@ -144,8 +146,18 @@ public class Monde implements Iterable<Element> {
                 this.elements.add(element);
                 break;
             case '1':
+                element = new Gemme1(new Vector2(i, hauteur - j));
+                element.setBodyDef();
+                element.createBody(monde);
+                element.setFixture();
+                this.elements.add(element);
                 break;
             case '2':
+                element = new Gemme2(new Vector2(i, hauteur - j));
+                element.setBodyDef();
+                element.createBody(monde);
+                element.setFixture();
+                this.elements.add(element);
                 break;
             default:
                 //On nefait rien, V est inclus.
