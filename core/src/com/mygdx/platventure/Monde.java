@@ -2,6 +2,7 @@ package com.mygdx.platventure;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.platventure.elements.Eau;
 import com.mygdx.platventure.elements.Element;
 import com.mygdx.platventure.elements.briques.BriqueA;
 import com.mygdx.platventure.elements.briques.BriqueB;
@@ -129,15 +130,21 @@ public class Monde implements Iterable<Element> {
                 break;
             case 'P':
                 break;
-            case 'V':
-                break;
             case 'W':
+                element = new Eau(new Vector2(i, hauteur - j));
+                element.setBodyDef();
+                element.createBody(monde);
+                element.setFixture();
+                this.elements.add(element);
                 break;
             case 'Z':
                 break;
             case '1':
                 break;
             case '2':
+                break;
+            default:
+                //On nefait rien, V est inclus.
                 break;
         }
     }
