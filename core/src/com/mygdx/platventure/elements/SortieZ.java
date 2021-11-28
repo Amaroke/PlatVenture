@@ -5,16 +5,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-public class Eau extends Element {
+public class SortieZ extends Element {
 
     private final PolygonShape forme = new PolygonShape();
 
-    public Eau(Vector2 position) {
+    public SortieZ(Vector2 position) {
         super(position);
         Vector2[] vectors = {
                 new Vector2(0, 0),
-                new Vector2(0, 0.75f),
-                new Vector2(1, 0.75f),
+                new Vector2(0, 1),
+                new Vector2(1, 1),
                 new Vector2(1, 0)
         };
         this.forme.set(vectors);
