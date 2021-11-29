@@ -13,6 +13,7 @@ public class PlatVenture extends Game {
     @Override
     public void create() {
         listeAff = new SpriteBatch();
+        // On lance l'écran de présentation
         setScreen(new EcranPresentation(this));
     }
 
@@ -33,7 +34,7 @@ public class PlatVenture extends Game {
         this.monde = monde;
     }
 
-    public char[][] getNiveau() {
+    public char[][] getTableauNiveau() {
         return niveau.getTableau();
     }
 

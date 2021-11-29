@@ -26,8 +26,11 @@ public class Monde implements Iterable<Element> {
     private final int hauteur;
 
     public Monde(char[][] tab) {
+        // On crée un monde avec une gravité de 10unités/s²
         monde = new World(new Vector2(0, -10f), true);
+        // On crée une liste d'éléments présent dans le monde
         this.elements = new ArrayList<>();
+        // On crée tous les éléments resepctivement au tableau extrait du .txt du niveau
         this.hauteur = tab[0].length - 1;
         for (int i = 0; i < tab.length; ++i) {
             for (int j = 0; j < tab[i].length; ++j) {
@@ -37,7 +40,7 @@ public class Monde implements Iterable<Element> {
     }
 
     private void creerElement(char lettre, int i, int j) {
-        Element element;
+        Element element = null;
         switch (lettre) {
             case 'A':
             case 'B':
@@ -49,75 +52,47 @@ public class Monde implements Iterable<Element> {
             case 'H':
             case 'I':
                 element = new Brique(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case 'J':
                 element = new PlateformeJ(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case 'K':
                 element = new PlateformeK(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case 'L':
                 element = new PlateformeL(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case 'P':
                 element = new JoueurP(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
                 this.joueur = (JoueurP) element;
-                this.elements.add(joueur);
                 break;
             case 'W':
                 element = new EauW(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case 'Z':
                 element = new SortieZ(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case '1':
                 element = new Gemme1(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             case '2':
                 element = new Gemme2(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
                 break;
             default:
                 //On nefait rien, V est inclus.
                 break;
         }
+        if (element != null) {
+            // On place les éléments
+            element.setBodyDef();
+            element.createBody(monde);
+            element.setFixture();
+            this.elements.add(element);
+        }
     }
 
     public void update() {
+        // On met à jour la position des éléments dans le monde
         for (Element e : this) {
             e.setPosition(e.getBody().getPosition());
         }
@@ -126,6 +101,7 @@ public class Monde implements Iterable<Element> {
     @Override
     @NotNull
     public Iterator<Element> iterator() {
+        // On s'en sert pour parcourir les diférentes éléments avec un foreach
         return this.elements.iterator();
     }
 

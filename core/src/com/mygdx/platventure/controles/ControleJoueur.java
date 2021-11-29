@@ -7,25 +7,26 @@ import com.badlogic.gdx.math.Vector2;
 
 public class ControleJoueur implements InputProcessor {
 
-    static final int hauteurSaut = 45;
+    // 40 + 10 pour contrer la gravité
+    static final int hauteurSaut = 50;
     private final Vector2 deplacement = new Vector2(0f, 0f);
     private boolean debugActif = true;
     private long appui = 0;
 
     @Override
     public boolean keyDown(int keycode) {
-        // En cas d'appui sur la flèche du haut ou de Z on saute
-        if (keycode == Input.Keys.UP || keycode == Input.Keys.Z) {
+        // En cas d'appui sur la flèche du haut on saute
+        if (keycode == Input.Keys.UP) {
             deplacement.y = hauteurSaut;
             return true;
         }
-        // En cas d'appui sur la flèche de gauche ou de Q on va à gauche
-        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.Q) {
+        // En cas d'appui sur la flèche de gauche on va à gauche
+        if (keycode == Input.Keys.LEFT) {
             deplacement.x = -1f;
             return true;
         }
-        // En cas d'appui sur la flèche de droite ou de D on va à droite
-        if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
+        // En cas d'appui sur la flèche de droite on va à droite
+        if (keycode == Input.Keys.RIGHT) {
             deplacement.x = 1f;
             return true;
         }
@@ -40,11 +41,11 @@ public class ControleJoueur implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         // Lorsque l'on relâche les touches, on retire le déplacement
-        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.RIGHT || keycode == Input.Keys.Q || keycode == Input.Keys.D) {
+        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.RIGHT) {
             deplacement.x = 0f;
             return true;
         }
-        if (keycode == Input.Keys.UP || keycode == Input.Keys.Z) {
+        if (keycode == Input.Keys.UP) {
             deplacement.y = 0f;
             return true;
         }

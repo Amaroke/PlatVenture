@@ -27,7 +27,9 @@ public class JoueurP extends Element {
     @Override
     public void setBodyDef() {
         this.bodyDef = new BodyDef();
+        // L'element de peut se déplacer
         this.bodyDef.type = BodyDef.BodyType.DynamicBody;
+        // Il ne peut pas faire de rotation, et donc ne peut pas tomber
         this.bodyDef.fixedRotation = true;
         this.bodyDef.position.set(this.position);
     }
@@ -56,6 +58,7 @@ public class JoueurP extends Element {
     }
 
     public void setMouvevement(Vector2 v) {
+        // On met "< 0.00001" au lieu de "== 0", pour plus de liberté de mouvement
         if (this.getBody().getLinearVelocity().y < 0.00001f && this.getBody().getLinearVelocity().y > -0.00001f) {
             this.getBody().applyForceToCenter(v, true);
         }

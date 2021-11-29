@@ -32,6 +32,7 @@ public class SortieZ extends Element {
         if ((this.bodyDef != null) && (this.body != null)) {
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = forme;
+            // L'objet est traversable
             fixtureDef.isSensor = true;
             getBody().createFixture(fixtureDef);
         }

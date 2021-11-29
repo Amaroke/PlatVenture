@@ -13,7 +13,7 @@ import com.mygdx.platventure.controles.ControleJoueur;
 
 public class EcranJeu extends ScreenAdapter {
 
-    final private PlatVenture game;
+    final private PlatVenture platVenture;
     //final private Texture font;
 
     private final OrthographicCamera camera;
@@ -23,52 +23,58 @@ public class EcranJeu extends ScreenAdapter {
     private final ControleJoueur controleJoueur = new ControleJoueur();
 
 
-    public EcranJeu(PlatVenture game) {
-        this.game = game;
+    public EcranJeu(PlatVenture platVenture) {
+        this.platVenture = platVenture;
         //this.font = new Texture("images/Back.png");
-        //On charge le niveau 1
-        this.game.setNiveau(new Niveau("levels/level_001.txt"));
-        this.game.setMonde(new Monde(this.game.getNiveau()));
+        // On charge le niveau 1
+        this.platVenture.setNiveau(new Niveau("levels/level_001.txt"));
+        this.platVenture.setMonde(new Monde(this.platVenture.getTableauNiveau()));
 
-        //On définit la caméra
+        // On définit la caméra
         camera = new OrthographicCamera();
         vp = new FitViewport(16f, (16f * Gdx.graphics.getHeight()) / Gdx.graphics.getWidth(), camera);
         vp.apply();
         camera.update();
 
-        //On définit l'écran de debug
+        // On définit l'écran de debug
         debugRenderer = new Box2DDebugRenderer();
+        // On définit les controles du joueurs
         Gdx.input.setInputProcessor(this.controleJoueur);
     }
 
     @Override
     public void show() {
+        // On est obligé de faire un appel ici, autrement ils ne sont pas pris en compte
         Gdx.input.setInputProcessor(this.controleJoueur);
     }
 
     @Override
     public void render(float delta) {
-        //On nettoie l'écran
+        // On nettoie l'écran
         ScreenUtils.clear(0, 0, 0, 1);
-        this.game.getMonde().getJoueur().setMouvevement(this.controleJoueur.getDeplacement());
-        this.game.getMonde().update();
-        game.getMonde().getMonde().step(Gdx.graphics.getDeltaTime(), 6, 2);
-        //On update la caméra
+        // On attribue le déplacement voulu au joueur
+        this.platVenture.getMonde().getJoueur().setMouvevement(this.controleJoueur.getDeplacement());
+        // On update le monde
+        this.platVenture.getMonde().update();
+        // On définit le step du monde
+        platVenture.getMonde().getMonde().step(Gdx.graphics.getDeltaTime(), 6, 2);
+        // On update la caméra
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
-        game.getListeAff().setProjectionMatrix(camera.combined);
-        game.getListeAff().begin();
+        platVenture.getListeAff().setProjectionMatrix(camera.combined);
+        platVenture.getListeAff().begin();
         //On affiche le mode de debug
         //game.getListeAff().draw(this.font, 0, 0, game.getNiveauLargeur(), game.getNiveauHauteur());
         if (this.controleJoueur.isDebugActif()) {
-            debugRenderer.render(game.getMonde().getMonde(), camera.combined);
+            debugRenderer.render(platVenture.getMonde().getMonde(), camera.combined);
         }
-
-        game.getListeAff().end();
+        platVenture.getListeAff().end();
     }
 
     @Override
     public void dispose() {
+        platVenture.dispose();
+        debugRenderer.dispose();
     }
 
     @Override
@@ -76,7 +82,7 @@ public class EcranJeu extends ScreenAdapter {
         vp.update(width, height);
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
-        game.getListeAff().setProjectionMatrix(camera.combined);
+        platVenture.getListeAff().setProjectionMatrix(camera.combined);
     }
 
 }
