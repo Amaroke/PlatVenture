@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.platventure.Monde;
 import com.mygdx.platventure.Niveau;
 import com.mygdx.platventure.PlatVenture;
+import com.mygdx.platventure.controles.ControleJoueur;
 
 public class EcranJeu extends ScreenAdapter {
 
@@ -19,6 +20,8 @@ public class EcranJeu extends ScreenAdapter {
     private final FitViewport vp;
 
     private final Box2DDebugRenderer debugRenderer;
+    private final ControleJoueur controleJoueur = new ControleJoueur();
+
 
     public EcranJeu(PlatVenture game) {
         this.game = game;
@@ -35,25 +38,32 @@ public class EcranJeu extends ScreenAdapter {
 
         //On définit l'écran de debug
         debugRenderer = new Box2DDebugRenderer();
+        Gdx.input.setInputProcessor(this.controleJoueur);
     }
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(this.controleJoueur);
     }
 
     @Override
     public void render(float delta) {
         //On nettoie l'écran
         ScreenUtils.clear(0, 0, 0, 1);
-        //On updta la caméra
+        this.game.getMonde().getJoueur().setMouvevement(this.controleJoueur.getDeplacement());
+        this.game.getMonde().update();
+        game.getMonde().getMonde().step(Gdx.graphics.getDeltaTime(), 6, 2);
+        //On update la caméra
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
         game.getListeAff().setProjectionMatrix(camera.combined);
         game.getListeAff().begin();
         //On affiche le mode de debug
-        debugRenderer.render(game.getMonde().getMonde(), camera.combined);
         //game.getListeAff().draw(this.font, 0, 0, game.getNiveauLargeur(), game.getNiveauHauteur());
+        if (this.controleJoueur.isDebugActif()) {
+            debugRenderer.render(game.getMonde().getMonde(), camera.combined);
+        }
+
         game.getListeAff().end();
     }
 

@@ -1,23 +1,32 @@
-package com.mygdx.platventure.elements;
+package com.mygdx.platventure.elements.plateformes;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.mygdx.platventure.elements.Element;
 
-public class EauW extends Element {
+public abstract class Plateforme extends Element {
 
-    private final PolygonShape forme = new PolygonShape();
+    protected final PolygonShape forme;
+    protected final float densite;
+    protected final float restitution;
+    protected final float friction;
 
-    public EauW(Vector2 position) {
+    public Plateforme(Vector2 position) {
         super(position);
-        Vector2[] points = {
-                new Vector2(0, 0),
+        this.forme = new PolygonShape();
+        this.densite = 1f;
+        this.restitution = 0.1f;
+        this.friction = 0.25f;
+        Vector2[] vectors = {
                 new Vector2(0, 0.75f),
                 new Vector2(1, 0.75f),
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                new Vector2(0.5f, 0),
+                new Vector2(0, 0.375f),
         };
-        this.forme.set(points);
+        this.forme.set(vectors);
     }
 
     @Override
@@ -32,7 +41,9 @@ public class EauW extends Element {
         if ((this.bodyDef != null) && (this.body != null)) {
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = forme;
-            fixtureDef.isSensor = true;
+            fixtureDef.density = densite;
+            fixtureDef.restitution = restitution;
+            fixtureDef.friction = friction;
             getBody().createFixture(fixtureDef);
         }
         this.forme.dispose();

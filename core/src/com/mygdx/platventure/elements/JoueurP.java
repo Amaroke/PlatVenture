@@ -14,13 +14,13 @@ public class JoueurP extends Element {
     public JoueurP(Vector2 position) {
         super(position);
         Vector2[] vecteurs = {
-                new Vector2(0, 0.47f),
+                new Vector2(0, 0.5f),
                 new Vector2(0.25f, 0),
                 new Vector2(0, -0.25f),
                 new Vector2(-0.25f, 0)
         };
         this.formeTete.set(vecteurs);
-        this.formePied.setRadius((0.125f));
+        this.formePied.setRadius(0.125f);
         this.formePied.setPosition(new Vector2(0, -0.375f));
     }
 
@@ -28,7 +28,8 @@ public class JoueurP extends Element {
     public void setBodyDef() {
         this.bodyDef = new BodyDef();
         this.bodyDef.type = BodyDef.BodyType.DynamicBody;
-        this.bodyDef.position.set(this.getPosition());
+        this.bodyDef.fixedRotation = true;
+        this.bodyDef.position.set(this.position);
     }
 
     @Override
@@ -36,20 +37,27 @@ public class JoueurP extends Element {
         if ((this.bodyDef != null) && (this.body != null)) {
             FixtureDef fixtureDefTete = new FixtureDef();
             fixtureDefTete.shape = this.formeTete;
-            fixtureDefTete.density = 1;
+            fixtureDefTete.density = 0.5f;
             fixtureDefTete.restitution = 0.1f;
             fixtureDefTete.friction = 0.25f;
             getBody().createFixture(fixtureDefTete);
 
             FixtureDef fixtureDefPied = new FixtureDef();
             fixtureDefPied.shape = this.formePied;
-            fixtureDefPied.density = 1;
+            fixtureDefPied.density = 0.5f;
             fixtureDefPied.restitution = 0.1f;
             fixtureDefPied.friction = 0.25f;
             getBody().createFixture(fixtureDefPied);
+
             getBody().setTransform(new Vector2(getPosition().x + 0.5f, getPosition().y + 0.5f), 0);
         }
         this.formeTete.dispose();
         this.formePied.dispose();
+    }
+
+    public void setMouvevement(Vector2 v) {
+        if (this.getBody().getLinearVelocity().y < 0.00001f && this.getBody().getLinearVelocity().y > -0.00001f) {
+            this.getBody().applyForceToCenter(v, true);
+        }
     }
 }

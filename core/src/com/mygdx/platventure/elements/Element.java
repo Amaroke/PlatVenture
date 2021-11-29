@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Element {
 
-    private final Vector2 position;
+    protected Vector2 position;
     protected Body body;
     protected BodyDef bodyDef;
     //private Texture texture;
@@ -30,5 +30,9 @@ public abstract class Element {
 
     public Body getBody() {
         return body;
+    }
+
+    public void setPosition(Vector2 pos) {
+        this.position = pos;
     }
 }

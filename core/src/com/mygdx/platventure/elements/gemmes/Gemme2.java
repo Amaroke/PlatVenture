@@ -22,9 +22,8 @@ public class Gemme2 extends Gemme {
         if ((this.bodyDef != null) && (this.body != null)) {
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = this.getForme();
-            fixtureDef.density = 0;
-            fixtureDef.restitution = 0;
-            fixtureDef.friction = 0;
+            // L'objet est traversable
+            fixtureDef.isSensor = true;
             getBody().createFixture(fixtureDef);
         }
         this.getForme().dispose();

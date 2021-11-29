@@ -2,19 +2,11 @@ package com.mygdx.platventure;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.platventure.elements.Brique;
 import com.mygdx.platventure.elements.EauW;
 import com.mygdx.platventure.elements.Element;
 import com.mygdx.platventure.elements.JoueurP;
 import com.mygdx.platventure.elements.SortieZ;
-import com.mygdx.platventure.elements.briques.BriqueA;
-import com.mygdx.platventure.elements.briques.BriqueB;
-import com.mygdx.platventure.elements.briques.BriqueC;
-import com.mygdx.platventure.elements.briques.BriqueD;
-import com.mygdx.platventure.elements.briques.BriqueE;
-import com.mygdx.platventure.elements.briques.BriqueF;
-import com.mygdx.platventure.elements.briques.BriqueG;
-import com.mygdx.platventure.elements.briques.BriqueH;
-import com.mygdx.platventure.elements.briques.BriqueI;
 import com.mygdx.platventure.elements.gemmes.Gemme1;
 import com.mygdx.platventure.elements.gemmes.Gemme2;
 import com.mygdx.platventure.elements.plateformes.PlateformeJ;
@@ -29,6 +21,7 @@ import java.util.Iterator;
 public class Monde implements Iterable<Element> {
 
     private final ArrayList<Element> elements;
+    private JoueurP joueur;
     private final World monde;
     private final int hauteur;
 
@@ -47,63 +40,15 @@ public class Monde implements Iterable<Element> {
         Element element;
         switch (lettre) {
             case 'A':
-                element = new BriqueA(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'B':
-                element = new BriqueB(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'C':
-                element = new BriqueC(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'D':
-                element = new BriqueD(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'E':
-                element = new BriqueE(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'F':
-                element = new BriqueF(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'G':
-                element = new BriqueG(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'H':
-                element = new BriqueH(new Vector2(i, hauteur - j));
-                element.setBodyDef();
-                element.createBody(monde);
-                element.setFixture();
-                this.elements.add(element);
-                break;
             case 'I':
-                element = new BriqueI(new Vector2(i, hauteur - j));
+                element = new Brique(new Vector2(i, hauteur - j));
                 element.setBodyDef();
                 element.createBody(monde);
                 element.setFixture();
@@ -135,7 +80,8 @@ public class Monde implements Iterable<Element> {
                 element.setBodyDef();
                 element.createBody(monde);
                 element.setFixture();
-                this.elements.add(element);
+                this.joueur = (JoueurP) element;
+                this.elements.add(joueur);
                 break;
             case 'W':
                 element = new EauW(new Vector2(i, hauteur - j));
@@ -171,6 +117,12 @@ public class Monde implements Iterable<Element> {
         }
     }
 
+    public void update() {
+        for (Element e : this) {
+            e.setPosition(e.getBody().getPosition());
+        }
+    }
+
     @Override
     @NotNull
     public Iterator<Element> iterator() {
@@ -179,6 +131,10 @@ public class Monde implements Iterable<Element> {
 
     public World getMonde() {
         return monde;
+    }
+
+    public JoueurP getJoueur() {
+        return joueur;
     }
 }
 

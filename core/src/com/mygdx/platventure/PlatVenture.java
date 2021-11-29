@@ -9,6 +9,7 @@ public class PlatVenture extends Game {
     private Niveau niveau;
     private Monde monde;
 
+
     @Override
     public void create() {
         listeAff = new SpriteBatch();
@@ -38,5 +39,13 @@ public class PlatVenture extends Game {
 
     public void setNiveau(Niveau niveau) {
         this.niveau = niveau;
+    }
+
+    public int getNiveauLargeur() {
+        return niveau.getLargeur();
+    }
+
+    public int getNiveauHauteur() {
+        return niveau.getHauteur();
     }
 }
