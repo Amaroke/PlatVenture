@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 
 public class ControleJoueur implements InputProcessor {
 
-    // 40 + 10 pour contrer la gravité
     static final int hauteurSaut = 40;
     private final Vector2 deplacement = new Vector2(0f, 0f);
     private boolean debugActif = true;
