@@ -38,6 +38,10 @@ public class PlatVenture extends Game {
         return niveau.getTableau();
     }
 
+    public int getTempsNiveau() {
+        return niveau.getTemps();
+    }
+
     public void setNiveau(Niveau niveau) {
         this.niveau = niveau;
     }
