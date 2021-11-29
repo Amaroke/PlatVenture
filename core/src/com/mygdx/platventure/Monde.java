@@ -105,7 +105,7 @@ public class Monde implements Iterable<Element> {
         return this.elements.iterator();
     }
 
-    public World getMonde() {
+    public World getWorld() {
         return monde;
     }
 

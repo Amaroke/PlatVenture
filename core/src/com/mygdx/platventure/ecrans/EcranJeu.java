@@ -57,7 +57,7 @@ public class EcranJeu extends ScreenAdapter {
         // On update le monde
         this.platVenture.getMonde().update();
         // On définit le step du monde
-        platVenture.getMonde().getMonde().step(Gdx.graphics.getDeltaTime(), 6, 2);
+        platVenture.getMonde().getWorld().step(Gdx.graphics.getDeltaTime(), 6, 2);
         // On update la caméra
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
@@ -66,7 +66,7 @@ public class EcranJeu extends ScreenAdapter {
         //On affiche le mode de debug
         //game.getListeAff().draw(this.font, 0, 0, game.getNiveauLargeur(), game.getNiveauHauteur());
         if (this.controleJoueur.isDebugActif()) {
-            debugRenderer.render(platVenture.getMonde().getMonde(), camera.combined);
+            debugRenderer.render(platVenture.getMonde().getWorld(), camera.combined);
         }
         platVenture.getListeAff().end();
     }
