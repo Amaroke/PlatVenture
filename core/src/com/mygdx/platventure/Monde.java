@@ -24,10 +24,13 @@ public class Monde implements Iterable<Element> {
     private JoueurP joueur;
     private final World monde;
     private final int hauteur;
+    private final int temps;
+    private final int score = 0;
 
-    public Monde(char[][] tab) {
+    public Monde(char[][] tab, int temps) {
         // On crée un monde avec une gravité de 10unités/s²
         monde = new World(new Vector2(0, -10f), true);
+        this.temps = temps;
         // On crée une liste d'éléments présent dans le monde
         this.elements = new ArrayList<>();
         // On crée tous les éléments resepctivement au tableau extrait du .txt du niveau

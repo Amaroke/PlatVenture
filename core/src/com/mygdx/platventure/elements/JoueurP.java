@@ -10,18 +10,20 @@ public class JoueurP extends Element {
 
     private final PolygonShape formeTete = new PolygonShape();
     private final CircleShape formePied = new CircleShape();
+    // On respecte le ratio de l'image
+    static final float ratio = 500f * 0.5f / 290f;
 
     public JoueurP(Vector2 position) {
         super(position);
         Vector2[] vecteurs = {
-                new Vector2(0, 0.5f),
-                new Vector2(0.25f, 0),
-                new Vector2(0, -0.25f),
-                new Vector2(-0.25f, 0)
+                new Vector2(0.25f, ratio / 2),
+                new Vector2(0.5f, ratio),
+                new Vector2(0.75f, ratio / 2),
+                new Vector2(0.50f, ratio / 4)
         };
         this.formeTete.set(vecteurs);
-        this.formePied.setRadius(0.125f);
-        this.formePied.setPosition(new Vector2(0, -0.375f));
+        this.formePied.setRadius(ratio / 8);
+        this.formePied.setPosition(new Vector2(0.50f, ratio / 8));
     }
 
     @Override
@@ -41,17 +43,17 @@ public class JoueurP extends Element {
             fixtureDefTete.shape = this.formeTete;
             fixtureDefTete.density = 0.5f;
             fixtureDefTete.restitution = 0.1f;
-            fixtureDefTete.friction = 0.25f;
+            fixtureDefTete.friction = 0.5f;
             getBody().createFixture(fixtureDefTete);
 
             FixtureDef fixtureDefPied = new FixtureDef();
             fixtureDefPied.shape = this.formePied;
             fixtureDefPied.density = 0.5f;
             fixtureDefPied.restitution = 0.1f;
-            fixtureDefPied.friction = 0.25f;
+            fixtureDefPied.friction = 0.5f;
             getBody().createFixture(fixtureDefPied);
 
-            getBody().setTransform(new Vector2(getPosition().x + 0.5f, getPosition().y + 0.5f), 0);
+            getBody().setTransform(new Vector2(getPosition().x, getPosition().y), 0);
         }
         this.formeTete.dispose();
         this.formePied.dispose();

@@ -28,7 +28,7 @@ public class EcranJeu extends ScreenAdapter {
         //this.font = new Texture("images/Back.png");
         // On charge le niveau 1
         this.platVenture.setNiveau(new Niveau("levels/level_001.txt"));
-        this.platVenture.setMonde(new Monde(this.platVenture.getTableauNiveau()));
+        this.platVenture.setMonde(new Monde(this.platVenture.getTableauNiveau(), this.platVenture.getTempsNiveau()));
 
         // On définit la caméra
         camera = new OrthographicCamera();
