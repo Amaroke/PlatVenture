@@ -12,6 +12,11 @@ public class Gemme1 extends Gemme {
     }
 
     @Override
+    public int getPoints() {
+        return 1;
+    }
+
+    @Override
     public void setBodyDef() {
         this.bodyDef = new BodyDef();
         this.bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -26,7 +31,7 @@ public class Gemme1 extends Gemme {
             // L'objet est traversable
             fixtureDef.isSensor = true;
             getBody().createFixture(fixtureDef);
-            getBody().setUserData(UserData.GEMME1);
+            getBody().setUserData(UserData.GEMME);
         }
         this.getForme().dispose();
     }

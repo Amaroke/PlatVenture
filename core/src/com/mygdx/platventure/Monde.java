@@ -1,6 +1,7 @@
 package com.mygdx.platventure;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.platventure.ecouteurs.EcouteurCollision;
@@ -9,6 +10,7 @@ import com.mygdx.platventure.elements.EauW;
 import com.mygdx.platventure.elements.Element;
 import com.mygdx.platventure.elements.JoueurP;
 import com.mygdx.platventure.elements.SortieZ;
+import com.mygdx.platventure.elements.gemmes.Gemme;
 import com.mygdx.platventure.elements.gemmes.Gemme1;
 import com.mygdx.platventure.elements.gemmes.Gemme2;
 import com.mygdx.platventure.elements.plateformes.PlateformeJ;
@@ -20,15 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-@SuppressWarnings("MismatchedReadAndWriteOfArray")
 public class Monde implements Iterable<Element> {
 
     private final ArrayList<Element> elements;
     private JoueurP joueur;
     private final World monde;
     private final int hauteur;
-    private final int temps;
-    private final int score = 0;
+    private int temps;
+    private int score = 0;
     private final EcouteurCollision ecouteurCollision;
 
     public Monde(char[][] tab, int temps) {
@@ -52,6 +53,7 @@ public class Monde implements Iterable<Element> {
             @Override
             public void run() {
                 tabTemps[0]--;
+                setTemps(tabTemps[0]);
             }
         };
         timer.scheduleTask(task, 1f, 1f);
@@ -117,6 +119,16 @@ public class Monde implements Iterable<Element> {
         for (Element e : this) {
             e.setPosition(e.getBody().getPosition());
         }
+        // En cas de contact avec une gemme, on la détruit et on augmente le score
+        if (this.ecouteurCollision.getGemmeEnContact() != null) {
+            Element gemme = recupererElement(this.ecouteurCollision.getGemmeEnContact());
+            removeElement(gemme);
+            this.score += ((Gemme) gemme).getPoints();
+            this.monde.destroyBody(this.ecouteurCollision.getGemmeEnContact());
+            this.ecouteurCollision.setGemmeEnContact(null);
+        }
+        System.out.println(score);
+        System.out.println(getTemps());
     }
 
     @Override
@@ -136,6 +148,23 @@ public class Monde implements Iterable<Element> {
 
     public int getTemps() {
         return temps;
+    }
+
+    public Element recupererElement(Body b) {
+        for (Element e : this) {
+            if (b == e.getBody()) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public void setTemps(int temps) {
+        this.temps = temps;
+    }
+
+    public void removeElement(Element e) {
+        elements.remove(e);
     }
 }
 

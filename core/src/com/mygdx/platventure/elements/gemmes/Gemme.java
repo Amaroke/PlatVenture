@@ -18,4 +18,6 @@ public abstract class Gemme extends Element {
     public CircleShape getForme() {
         return forme;
     }
+
+    public abstract int getPoints();
 }
