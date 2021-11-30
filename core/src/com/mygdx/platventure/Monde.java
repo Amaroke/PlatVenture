@@ -24,25 +24,40 @@ import java.util.Iterator;
 
 public class Monde implements Iterable<Element> {
 
-    private final ArrayList<Element> elements;
+    private ArrayList<Element> elements;
+    private World monde;
+    private int hauteur;
+    private EcouteurCollision ecouteurCollision;
     private JoueurP joueur;
-    private final World monde;
-    private final int hauteur;
     private int temps;
     private int score = 0;
-    private final EcouteurCollision ecouteurCollision;
+    private Niveau niveau;
+    private int numeroNiveau;
+    private int largeurNiveau;
+    private int hauteurNiveau;
 
-    public Monde(char[][] tab, int temps) {
+    public Monde() {
+        creerMonde(1);
+    }
+
+    private void creerMonde(int numeroNiveau) {
+        // On modifie le numéro du niveau actuel
+        this.numeroNiveau = numeroNiveau;
+        // On charge le niveau 1
+        this.setNiveau(new Niveau("levels/level_00" + numeroNiveau + ".txt"));
         // On crée un monde avec une gravité de 10unités/s²
         monde = new World(new Vector2(0, -10f), true);
-        this.temps = temps;
+        // On récupère les informations du niveau en cours
+        this.temps = getTempsNiveau();
+        largeurNiveau = getNiveauLargeur();
+        hauteurNiveau = getNiveauHauteur();
         // On crée une liste d'éléments présent dans le monde
         this.elements = new ArrayList<>();
         // On crée tous les éléments resepctivement au tableau extrait du .txt du niveau
-        this.hauteur = tab[0].length - 1;
-        for (int i = 0; i < tab.length; ++i) {
-            for (int j = 0; j < tab[i].length; ++j) {
-                creerElement(tab[i][j], i, j);
+        this.hauteur = niveau.getTableau()[0].length - 1;
+        for (int i = 0; i < niveau.getTableau().length; ++i) {
+            for (int j = 0; j < niveau.getTableau()[i].length; ++j) {
+                creerElement(niveau.getTableau()[i][j], i, j);
             }
         }
         // On lance le timer du niveau
@@ -119,16 +134,57 @@ public class Monde implements Iterable<Element> {
         for (Element e : this) {
             e.setPosition(e.getBody().getPosition());
         }
+        if (temps == 0) {
+            finDePartiePerdue();
+        }
         // En cas de contact avec une gemme, on la détruit et on augmente le score
         if (this.ecouteurCollision.getGemmeEnContact() != null) {
             Element gemme = recupererElement(this.ecouteurCollision.getGemmeEnContact());
-            removeElement(gemme);
+            supprimerElement(gemme);
             this.score += ((Gemme) gemme).getPoints();
             this.monde.destroyBody(this.ecouteurCollision.getGemmeEnContact());
             this.ecouteurCollision.setGemmeEnContact(null);
         }
-        System.out.println(score);
-        System.out.println(getTemps());
+        // En cas de contact avec de l'eau on lance la fin de partie
+        if (this.ecouteurCollision.isEauEnContact()) {
+            this.finDePartiePerdue();
+        }
+        // En cas de sortie de l'écran
+        if (this.joueur.getPosition().x > largeurNiveau || this.joueur.getPosition().x < -1 || this.joueur.getPosition().y > hauteurNiveau || this.joueur.getPosition().y < -1) {
+            if (this.ecouteurCollision.isPancarteDejaEnContact()) {
+                finDePartieGagne();
+            } else {
+                finDePartiePerdue();
+            }
+        }
+    }
+
+    public void finDePartiePerdue() {
+        score = 0;
+        // TODO Affichage de l'écran de fin de partie
+        // TODO On joue le son de fin de partie
+        try {
+            Thread.sleep(2000);
+            this.monde.dispose();
+            creerMonde(numeroNiveau);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void finDePartieGagne() {
+        score = 0;
+        // TODO Affichage de l'écran de fin de partie
+        // TODO On joue le son de fin de partie
+        try {
+            Thread.sleep(2000);
+            this.monde.dispose();
+            // On passe au niveau suivant
+            numeroNiveau++;
+            creerMonde(numeroNiveau > 3 ? 1 : numeroNiveau);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -136,6 +192,22 @@ public class Monde implements Iterable<Element> {
     public Iterator<Element> iterator() {
         // On s'en sert pour parcourir les diférentes éléments avec un foreach
         return this.elements.iterator();
+    }
+
+    public int getTempsNiveau() {
+        return niveau.getTemps();
+    }
+
+    public void setNiveau(Niveau niveau) {
+        this.niveau = niveau;
+    }
+
+    public int getNiveauLargeur() {
+        return niveau.getLargeur();
+    }
+
+    public int getNiveauHauteur() {
+        return niveau.getHauteur();
     }
 
     public World getWorld() {
@@ -146,8 +218,8 @@ public class Monde implements Iterable<Element> {
         return joueur;
     }
 
-    public int getTemps() {
-        return temps;
+    public void setTemps(int temps) {
+        this.temps = temps;
     }
 
     public Element recupererElement(Body b) {
@@ -159,11 +231,7 @@ public class Monde implements Iterable<Element> {
         return null;
     }
 
-    public void setTemps(int temps) {
-        this.temps = temps;
-    }
-
-    public void removeElement(Element e) {
+    public void supprimerElement(Element e) {
         elements.remove(e);
     }
 }

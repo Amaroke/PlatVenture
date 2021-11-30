@@ -6,7 +6,6 @@ import com.mygdx.platventure.ecrans.EcranPresentation;
 
 public class PlatVenture extends Game {
     private SpriteBatch listeAff;
-    private Niveau niveau;
     private Monde monde;
 
 
@@ -32,25 +31,5 @@ public class PlatVenture extends Game {
 
     public void setMonde(Monde monde) {
         this.monde = monde;
-    }
-
-    public char[][] getTableauNiveau() {
-        return niveau.getTableau();
-    }
-
-    public int getTempsNiveau() {
-        return niveau.getTemps();
-    }
-
-    public void setNiveau(Niveau niveau) {
-        this.niveau = niveau;
-    }
-
-    public int getNiveauLargeur() {
-        return niveau.getLargeur();
-    }
-
-    public int getNiveauHauteur() {
-        return niveau.getHauteur();
     }
 }
