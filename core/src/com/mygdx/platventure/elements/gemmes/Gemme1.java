@@ -3,6 +3,7 @@ package com.mygdx.platventure.elements.gemmes;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.mygdx.platventure.ecouteurs.UserData;
 
 public class Gemme1 extends Gemme {
 
@@ -25,6 +26,7 @@ public class Gemme1 extends Gemme {
             // L'objet est traversable
             fixtureDef.isSensor = true;
             getBody().createFixture(fixtureDef);
+            getBody().setUserData(UserData.GEMME1);
         }
         this.getForme().dispose();
     }

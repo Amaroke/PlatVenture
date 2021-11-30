@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.mygdx.platventure.ecouteurs.UserData;
 
 public class JoueurP extends Element {
 
@@ -45,14 +46,14 @@ public class JoueurP extends Element {
             fixtureDefTete.restitution = 0.1f;
             fixtureDefTete.friction = 0.5f;
             getBody().createFixture(fixtureDefTete);
-
+            getBody().setUserData(UserData.JOUEURP);
             FixtureDef fixtureDefPied = new FixtureDef();
             fixtureDefPied.shape = this.formePied;
             fixtureDefPied.density = 0.5f;
             fixtureDefPied.restitution = 0.1f;
             fixtureDefPied.friction = 0.5f;
             getBody().createFixture(fixtureDefPied);
-
+            getBody().setUserData(UserData.JOUEURP);
             getBody().setTransform(new Vector2(getPosition().x, getPosition().y), 0);
         }
         this.formeTete.dispose();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.mygdx.platventure.ecouteurs.UserData;
 
 public class SortieZ extends Element {
 
@@ -35,6 +36,7 @@ public class SortieZ extends Element {
             // L'objet est traversable
             fixtureDef.isSensor = true;
             getBody().createFixture(fixtureDef);
+            getBody().setUserData(UserData.SORTIEZ);
         }
         this.forme.dispose();
     }

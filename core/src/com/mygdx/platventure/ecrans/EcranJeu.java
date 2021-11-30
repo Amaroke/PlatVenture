@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.platventure.Monde;
 import com.mygdx.platventure.Niveau;
 import com.mygdx.platventure.PlatVenture;
-import com.mygdx.platventure.controles.ControleJoueur;
+import com.mygdx.platventure.ecouteurs.EcouteurJoueur;
 
 public class EcranJeu extends ScreenAdapter {
 
@@ -20,7 +20,7 @@ public class EcranJeu extends ScreenAdapter {
     private final FitViewport vp;
 
     private final Box2DDebugRenderer debugRenderer;
-    private final ControleJoueur controleJoueur = new ControleJoueur();
+    private final EcouteurJoueur ecouteurJoueur = new EcouteurJoueur();
 
 
     public EcranJeu(PlatVenture platVenture) {
@@ -39,13 +39,13 @@ public class EcranJeu extends ScreenAdapter {
         // On définit l'écran de debug
         debugRenderer = new Box2DDebugRenderer();
         // On définit les controles du joueurs
-        Gdx.input.setInputProcessor(this.controleJoueur);
+        Gdx.input.setInputProcessor(this.ecouteurJoueur);
     }
 
     @Override
     public void show() {
         // On est obligé de faire un appel ici, autrement ils ne sont pas pris en compte
-        Gdx.input.setInputProcessor(this.controleJoueur);
+        Gdx.input.setInputProcessor(this.ecouteurJoueur);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class EcranJeu extends ScreenAdapter {
         // On nettoie l'écran
         ScreenUtils.clear(0, 0, 0, 1);
         // On attribue le déplacement voulu au joueur
-        this.platVenture.getMonde().getJoueur().setMouvevement(this.controleJoueur.getDeplacement());
+        this.platVenture.getMonde().getJoueur().setMouvevement(this.ecouteurJoueur.getDeplacement());
         // On update le monde
         this.platVenture.getMonde().update();
         // On définit le step du monde
@@ -65,7 +65,7 @@ public class EcranJeu extends ScreenAdapter {
         platVenture.getListeAff().begin();
         //On affiche le mode de debug
         //game.getListeAff().draw(this.font, 0, 0, game.getNiveauLargeur(), game.getNiveauHauteur());
-        if (this.controleJoueur.isDebugActif()) {
+        if (this.ecouteurJoueur.isDebugActif()) {
             debugRenderer.render(platVenture.getMonde().getWorld(), camera.combined);
         }
         platVenture.getListeAff().end();

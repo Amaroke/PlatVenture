@@ -2,6 +2,8 @@ package com.mygdx.platventure;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
+import com.mygdx.platventure.ecouteurs.EcouteurCollision;
 import com.mygdx.platventure.elements.Brique;
 import com.mygdx.platventure.elements.EauW;
 import com.mygdx.platventure.elements.Element;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+@SuppressWarnings("MismatchedReadAndWriteOfArray")
 public class Monde implements Iterable<Element> {
 
     private final ArrayList<Element> elements;
@@ -26,6 +29,7 @@ public class Monde implements Iterable<Element> {
     private final int hauteur;
     private final int temps;
     private final int score = 0;
+    private final EcouteurCollision ecouteurCollision;
 
     public Monde(char[][] tab, int temps) {
         // On crée un monde avec une gravité de 10unités/s²
@@ -40,6 +44,20 @@ public class Monde implements Iterable<Element> {
                 creerElement(tab[i][j], i, j);
             }
         }
+        // On lance le timer du niveau
+        // On utilise untableau pour modifier dans le timer
+        final int[] tabTemps = {this.temps};
+        Timer timer = new Timer();
+        Timer.Task task = new Timer.Task() {
+            @Override
+            public void run() {
+                tabTemps[0]--;
+            }
+        };
+        timer.scheduleTask(task, 1f, 1f);
+        // On met en place les collisions
+        this.ecouteurCollision = new EcouteurCollision();
+        this.monde.setContactListener(this.ecouteurCollision);
     }
 
     private void creerElement(char lettre, int i, int j) {
@@ -114,6 +132,10 @@ public class Monde implements Iterable<Element> {
 
     public JoueurP getJoueur() {
         return joueur;
+    }
+
+    public int getTemps() {
+        return temps;
     }
 }
 

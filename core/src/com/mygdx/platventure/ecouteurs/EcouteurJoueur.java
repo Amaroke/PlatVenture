@@ -1,11 +1,11 @@
-package com.mygdx.platventure.controles;
+package com.mygdx.platventure.ecouteurs;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 
-public class ControleJoueur implements InputProcessor {
+public class EcouteurJoueur implements InputProcessor {
 
     static final int hauteurSaut = 40;
     private final Vector2 deplacement = new Vector2(0f, 0f);
