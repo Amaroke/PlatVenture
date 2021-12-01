@@ -29,6 +29,7 @@ public class Monde implements Iterable<Element> {
     private int hauteur;
     private EcouteurCollision ecouteurCollision;
     private JoueurP joueur;
+    private Timer timer;
     private int temps;
     private int score = 0;
     private Niveau niveau;
@@ -63,7 +64,7 @@ public class Monde implements Iterable<Element> {
         // On lance le timer du niveau
         // On utilise untableau pour modifier dans le timer
         final int[] tabTemps = {this.temps};
-        Timer timer = new Timer();
+        timer = new Timer();
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
@@ -134,6 +135,7 @@ public class Monde implements Iterable<Element> {
         for (Element e : this) {
             e.setPosition(e.getBody().getPosition());
         }
+        System.out.println(temps);
         if (temps == 0) {
             finDePartiePerdue();
         }
@@ -164,8 +166,9 @@ public class Monde implements Iterable<Element> {
         // TODO Affichage de l'écran de fin de partie
         // TODO On joue le son de fin de partie
         try {
-            Thread.sleep(2000);
+            this.timer.clear();
             this.monde.dispose();
+            Thread.sleep(2000);
             creerMonde(numeroNiveau);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -177,8 +180,9 @@ public class Monde implements Iterable<Element> {
         // TODO Affichage de l'écran de fin de partie
         // TODO On joue le son de fin de partie
         try {
-            Thread.sleep(2000);
+            this.timer.clear();
             this.monde.dispose();
+            Thread.sleep(2000);
             // On passe au niveau suivant
             numeroNiveau++;
             creerMonde(numeroNiveau > 3 ? 1 : numeroNiveau);

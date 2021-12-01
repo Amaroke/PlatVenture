@@ -3,6 +3,7 @@ package com.mygdx.platventure.ecrans;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -56,8 +57,7 @@ public class EcranJeu extends ScreenAdapter {
         // On définit le step du monde
         platVenture.getMonde().getWorld().step(Gdx.graphics.getDeltaTime(), 6, 2);
         // On update la caméra
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        camera.update();
+        this.centrerCameraJoueur();
         platVenture.getListeAff().setProjectionMatrix(camera.combined);
         platVenture.getListeAff().begin();
         //On affiche le mode de debug
@@ -80,6 +80,29 @@ public class EcranJeu extends ScreenAdapter {
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
         platVenture.getListeAff().setProjectionMatrix(camera.combined);
+    }
+
+    public void centrerCameraJoueur() {
+        float positionJoueurX = this.platVenture.getMonde().getJoueur().getPosition().x;
+        float positionJoueurY = this.platVenture.getMonde().getJoueur().getPosition().y;
+        // Si le joueur est trop dans le haut de la caméra et qu'on dépasse pas la hauteur du niveau
+        if (positionJoueurY > camera.position.y && (camera.position.y + camera.viewportHeight / 2) < this.platVenture.getMonde().getNiveauHauteur()) {
+            // On déplace de 0.06 pour que ce soit fluide, comme dans la vidéo
+            camera.position.set(new Vector2(camera.position.x, camera.position.y + 0.06f), 0);
+        }
+        // Si le joueur est trop dans le bas de la caméra et qu'on dépasse pas la largeur du niveau
+        if (positionJoueurY < camera.position.y && camera.position.y > camera.viewportHeight / 2f) {
+            camera.position.set(new Vector2(camera.position.x, camera.position.y - 0.06f), 0);
+        }
+        // L'inverse des deux précédents
+        // On utilsie -2 et +2 pour que même au centre de l'écran le joueur est une zone de manoeuvre horizontale
+        if (positionJoueurX > camera.position.x + 2 && (camera.position.x + camera.viewportWidth / 2) < this.platVenture.getMonde().getNiveauLargeur()) {
+            camera.position.set(new Vector2(camera.position.x + 0.06f, camera.position.y), 0);
+        }
+        if (positionJoueurX < camera.position.x - 2 && camera.position.x > 16 / 2f) {
+            camera.position.set(new Vector2(camera.position.x - 0.06f, camera.position.y), 0);
+        }
+        camera.update();
     }
 
 }
