@@ -3,6 +3,7 @@ package com.mygdx.platventure.ecrans;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -14,7 +15,7 @@ import com.mygdx.platventure.ecouteurs.EcouteurJoueur;
 public class EcranJeu extends ScreenAdapter {
 
     final private PlatVenture platVenture;
-    //final private Texture font;
+    final private Texture font;
 
     private final OrthographicCamera camera;
     private final FitViewport vp;
@@ -25,7 +26,7 @@ public class EcranJeu extends ScreenAdapter {
 
     public EcranJeu(PlatVenture platVenture) {
         this.platVenture = platVenture;
-        //this.font = new Texture("images/Back.png");
+        this.font = new Texture("images/Back.png");
         this.platVenture.setMonde(new Monde());
 
         // On définit la caméra
@@ -61,7 +62,7 @@ public class EcranJeu extends ScreenAdapter {
         platVenture.getListeAff().setProjectionMatrix(camera.combined);
         platVenture.getListeAff().begin();
         //On affiche le mode de debug
-        //game.getListeAff().draw(this.font, 0, 0, game.getNiveauLargeur(), game.getNiveauHauteur());
+        //platVenture.getListeAff().draw(this.font, 0, 0, platVenture.getMonde().getNiveauLargeur(), platVenture.getMonde().getNiveauHauteur());
         if (this.ecouteurJoueur.isDebugActif()) {
             debugRenderer.render(platVenture.getMonde().getWorld(), camera.combined);
         }

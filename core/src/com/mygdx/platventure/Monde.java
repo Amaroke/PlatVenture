@@ -36,6 +36,7 @@ public class Monde implements Iterable<Element> {
     private int numeroNiveau;
     private int largeurNiveau;
     private int hauteurNiveau;
+    private final GestionnaireSon gestionnaireSon = new GestionnaireSon();
 
     public Monde() {
         creerMonde(1);
@@ -135,12 +136,13 @@ public class Monde implements Iterable<Element> {
         for (Element e : this) {
             e.setPosition(e.getBody().getPosition());
         }
-        System.out.println(temps);
+        // Si le temps arrive à 0, la partie est perdue
         if (temps == 0) {
             finDePartiePerdue();
         }
         // En cas de contact avec une gemme, on la détruit et on augmente le score
         if (this.ecouteurCollision.getGemmeEnContact() != null) {
+            this.gestionnaireSon.sonGemme();
             Element gemme = recupererElement(this.ecouteurCollision.getGemmeEnContact());
             supprimerElement(gemme);
             this.score += ((Gemme) gemme).getPoints();
@@ -149,6 +151,7 @@ public class Monde implements Iterable<Element> {
         }
         // En cas de contact avec de l'eau on lance la fin de partie
         if (this.ecouteurCollision.isEauEnContact()) {
+            this.gestionnaireSon.sonEau();
             this.finDePartiePerdue();
         }
         // En cas de sortie de l'écran
@@ -164,7 +167,7 @@ public class Monde implements Iterable<Element> {
     public void finDePartiePerdue() {
         score = 0;
         // TODO Affichage de l'écran de fin de partie
-        // TODO On joue le son de fin de partie
+        this.gestionnaireSon.sonPerdu();
         try {
             this.timer.clear();
             this.monde.dispose();
@@ -178,7 +181,7 @@ public class Monde implements Iterable<Element> {
     public void finDePartieGagne() {
         score = 0;
         // TODO Affichage de l'écran de fin de partie
-        // TODO On joue le son de fin de partie
+        this.gestionnaireSon.sonGagne();
         try {
             this.timer.clear();
             this.monde.dispose();
