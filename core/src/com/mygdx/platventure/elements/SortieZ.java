@@ -1,5 +1,6 @@
 package com.mygdx.platventure.elements;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -11,7 +12,7 @@ public class SortieZ extends Element {
     private final PolygonShape forme = new PolygonShape();
 
     public SortieZ(Vector2 position) {
-        super(position);
+        super(position, new Texture("images/Exit_Z.png"));
         Vector2[] points = {
                 new Vector2(0, 0),
                 new Vector2(0, 1),

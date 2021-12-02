@@ -1,5 +1,6 @@
 package com.mygdx.platventure.elements;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -13,8 +14,8 @@ public class Brique extends Element {
     private final float restitution;
     private final float friction;
 
-    public Brique(Vector2 position) {
-        super(position);
+    public Brique(Vector2 position, char type) {
+        super(position, new Texture("images/Brick_" + type + ".png"));
         this.forme = new PolygonShape();
         this.densite = 1f;
         this.restitution = 0.1f;

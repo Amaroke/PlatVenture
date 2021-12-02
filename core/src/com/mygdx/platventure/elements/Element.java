@@ -11,10 +11,13 @@ public abstract class Element {
     protected Vector2 position;
     protected Body body;
     protected BodyDef bodyDef;
-    private Texture texture;
+    protected Texture texture;
+    protected float hauteur = 1;
+    protected float largeur = 1;
 
-    public Element(Vector2 position) {
+    public Element(Vector2 position, Texture texture) {
         this.position = position;
+        this.texture = texture;
     }
 
     public abstract void setBodyDef();
@@ -35,5 +38,21 @@ public abstract class Element {
 
     public void setPosition(Vector2 pos) {
         this.position = pos;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public float getHauteur() {
+        return hauteur;
+    }
+
+    public float getLargeur() {
+        return largeur;
+    }
+
+    public boolean estJoueur() {
+        return false;
     }
 }

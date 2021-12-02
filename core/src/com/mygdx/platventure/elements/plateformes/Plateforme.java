@@ -1,5 +1,6 @@
 package com.mygdx.platventure.elements.plateformes;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -14,8 +15,9 @@ public abstract class Plateforme extends Element {
     protected final float restitution;
     protected final float friction;
 
-    public Plateforme(Vector2 position) {
-        super(position);
+    public Plateforme(Vector2 position, Texture texture) {
+        super(position, texture);
+        this.hauteur = 0.75f;
         this.forme = new PolygonShape();
         this.densite = 1f;
         this.restitution = 0.1f;

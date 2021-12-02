@@ -9,7 +9,7 @@ public class EcouteurJoueur implements InputProcessor {
 
     static final int hauteurSaut = 40;
     private final Vector2 deplacement = new Vector2(0f, 0f);
-    private boolean debugActif = true;
+    private boolean debugActif = false;
     private long appui = 0;
 
     @Override

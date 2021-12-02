@@ -1,5 +1,6 @@
 package com.mygdx.platventure.elements;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -15,7 +16,9 @@ public class JoueurP extends Element {
     private static final float ratio = 500f * 0.5f / 290f;
 
     public JoueurP(Vector2 position) {
-        super(position);
+        super(position, new Texture("images/Idle__000.png"));
+        this.hauteur = ratio;
+        this.largeur = 0.5f;
         Vector2[] vecteurs = {
                 new Vector2(0.25f, ratio / 2),
                 new Vector2(0.5f, ratio),
@@ -65,5 +68,10 @@ public class JoueurP extends Element {
         if (this.getBody().getLinearVelocity().y < 0.00001f && this.getBody().getLinearVelocity().y > -0.00001f) {
             this.getBody().applyForceToCenter(v, true);
         }
+    }
+
+    @Override
+    public boolean estJoueur() {
+        return true;
     }
 }

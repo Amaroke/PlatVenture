@@ -46,7 +46,7 @@ public class GestionnaireSons {
                 sonPerdu();
             }
         };
-        (new Timer()).scheduleTask(task, 0.5f);
+        (new Timer()).scheduleTask(task, 0.4f);
     }
 
     public void sonGagne() {

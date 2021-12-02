@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.platventure.Monde;
 import com.mygdx.platventure.PlatVenture;
 import com.mygdx.platventure.ecouteurs.EcouteurJoueur;
+import com.mygdx.platventure.elements.Element;
 
 public class EcranJeu extends ScreenAdapter {
 
@@ -62,9 +63,20 @@ public class EcranJeu extends ScreenAdapter {
         platVenture.getListeAff().setProjectionMatrix(camera.combined);
         platVenture.getListeAff().begin();
         //On affiche le mode de debug
-        //platVenture.getListeAff().draw(this.font, 0, 0, platVenture.getMonde().getNiveauLargeur(), platVenture.getMonde().getNiveauHauteur());
         if (this.ecouteurJoueur.isDebugActif()) {
             debugRenderer.render(platVenture.getMonde().getWorld(), camera.combined);
+        } else {
+            platVenture.getListeAff().draw(this.font, 0, 0, platVenture.getMonde().getNiveauLargeur(), platVenture.getMonde().getNiveauHauteur());
+            for (Element e : this.platVenture.getMonde().getElements()) {
+                if (e.getTexture() != null) {
+                    if (e.estJoueur()) {
+                        platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x + 0.25f, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                    } else {
+                        platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                    }
+
+                }
+            }
         }
         platVenture.getListeAff().end();
     }

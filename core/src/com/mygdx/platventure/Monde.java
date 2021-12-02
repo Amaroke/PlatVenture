@@ -43,6 +43,7 @@ public class Monde implements Iterable<Element> {
     private Timer timer;
     private int temps;
     private int score = 0;
+    private boolean entrainDePerdre;
     private final GestionnaireSons gestionnaireSons = new GestionnaireSons();
     private int numeroNiveau;
     private int largeurNiveau;
@@ -54,6 +55,7 @@ public class Monde implements Iterable<Element> {
     }
 
     private void creerMonde(int numeroNiveau, int score) {
+        this.entrainDePerdre = false;
         // On modifie le numéro du niveau actuel
         this.setNumeroNiveau(numeroNiveau);
         // On charge le score
@@ -76,7 +78,7 @@ public class Monde implements Iterable<Element> {
             }
         }
         // On lance le timer du niveau
-        // On utilise untableau pour modifier dans le timer
+        // On utilise un tableau pour modifier dans le timer
         final int[] tabTemps = {this.getTemps()};
         setTimer(new Timer());
         Timer.Task task = new Timer.Task() {
@@ -105,7 +107,7 @@ public class Monde implements Iterable<Element> {
             case 'G':
             case 'H':
             case 'I':
-                element = new Brique(new Vector2(i, getHauteur() - j));
+                element = new Brique(new Vector2(i, getHauteur() - j), lettre);
                 break;
             case 'J':
                 element = new PlateformeJ(new Vector2(i, getHauteur() - j));
@@ -163,18 +165,20 @@ public class Monde implements Iterable<Element> {
             this.getMonde().destroyBody(this.getEcouteurCollision().getGemmeEnContact());
             this.getEcouteurCollision().setGemmeEnContact(null);
         }
-        // En cas de contact avec de l'eau on lance la fin de partie
-        if (this.getEcouteurCollision().isEauEnContact()) {
-            this.getGestionnaireSons().sonEau();
-            this.finDePartiePerdue();
-        }
         // En cas de sortie de l'écran
-        if (this.getJoueur().getPosition().x > getLargeurNiveau() || this.getJoueur().getPosition().x < -1 || this.getJoueur().getPosition().y > getHauteurNiveau() || this.getJoueur().getPosition().y < -1) {
-            if (this.getEcouteurCollision().isPancarteDejaEnContact()) {
-                finDePartieGagne();
-            } else {
-                this.getGestionnaireSons().sonPerdu();
-                finDePartiePerdue();
+        if (!entrainDePerdre) {
+            if (this.getJoueur().getPosition().x > getLargeurNiveau() || this.getJoueur().getPosition().x < -1 || this.getJoueur().getPosition().y > getHauteurNiveau() || this.getJoueur().getPosition().y < -1) {
+                if (this.getEcouteurCollision().isPancarteDejaEnContact()) {
+                    finDePartieGagne();
+                } else {
+                    this.getGestionnaireSons().sonPerdu();
+                    finDePartiePerdue();
+                }
+            }
+            // En cas de contact avec de l'eau on lance la fin de partie
+            if (this.getEcouteurCollision().isEauEnContact()) {
+                this.getGestionnaireSons().sonEau();
+                this.finDePartiePerdue();
             }
         }
 
@@ -186,16 +190,18 @@ public class Monde implements Iterable<Element> {
 
     public void finDePartiePerdue() {
         setScore(0);
+        entrainDePerdre = true;
         // TODO Affichage de l'écran de fin de partie
         // TODO Gérer l'eau et le son de défaite en même temps
-        try {
-            this.getTimer().clear();
-            this.getMonde().dispose();
-            Thread.sleep(2000);
-            creerMonde(getNumeroNiveau(), getScore());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.getTimer().clear();
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                getMonde().dispose();
+                creerMonde(getNumeroNiveau(), getScore());
+            }
+        }, 2);
+
     }
 
     public void finDePartieGagne() {
