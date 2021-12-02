@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.mygdx.platventure.ecouteurs.UserData;
 
 public class Brique extends Element {
 
@@ -43,6 +44,7 @@ public class Brique extends Element {
             fixtureDef.restitution = restitution;
             fixtureDef.friction = friction;
             getBody().createFixture(fixtureDef);
+            getBody().setUserData(UserData.BRIQUE);
         }
         this.forme.dispose();
     }

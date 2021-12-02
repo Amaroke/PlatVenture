@@ -96,7 +96,7 @@ public class EcranJeu extends ScreenAdapter {
             camera.position.set(new Vector2(camera.position.x, camera.position.y - 0.06f), 0);
         }
         // L'inverse des deux précédents
-        // On utilsie -2 et +2 pour que même au centre de l'écran le joueur est une zone de manoeuvre horizontale
+        // On utilsie -2 et +2 pour que même au centre de l'écran le joueur ait une zone de manoeuvre horizontale
         if (positionJoueurX > camera.position.x + 2 && (camera.position.x + camera.viewportWidth / 2) < this.platVenture.getMonde().getNiveauLargeur()) {
             camera.position.set(new Vector2(camera.position.x + 0.06f, camera.position.y), 0);
         }

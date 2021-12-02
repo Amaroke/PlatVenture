@@ -1,5 +1,5 @@
 package com.mygdx.platventure.ecouteurs;
 
 public enum UserData {
-    EAUW, JOUEURP, SORTIEZ, GEMME
+    BRIQUE, EAUW, JOUEURP, SORTIEZ, GEMME
 }

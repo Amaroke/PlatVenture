@@ -1,9 +1,10 @@
-package com.mygdx.platventure;
+package com.mygdx.platventure.gestionnaires;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.utils.Timer;
 
-public class GestionnaireSon {
+public class GestionnaireSons {
 
     private final Sound alert;
     private final Sound collision;
@@ -12,7 +13,7 @@ public class GestionnaireSon {
     private final Sound plouf;
     private final Sound win;
 
-    public GestionnaireSon() {
+    public GestionnaireSons() {
         this.alert = Gdx.audio.newSound(Gdx.files.internal("sounds/alert.ogg"));
         this.collision = Gdx.audio.newSound(Gdx.files.internal("sounds/collision.ogg"));
         this.gem = Gdx.audio.newSound(Gdx.files.internal("sounds/gem.ogg"));
@@ -39,6 +40,13 @@ public class GestionnaireSon {
 
     public void sonEau() {
         this.plouf.play();
+        Timer.Task task = new Timer.Task() {
+            @Override
+            public void run() {
+                sonPerdu();
+            }
+        };
+        (new Timer()).scheduleTask(task, 0.5f);
     }
 
     public void sonGagne() {

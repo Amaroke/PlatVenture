@@ -12,7 +12,7 @@ public class JoueurP extends Element {
     private final PolygonShape formeTete = new PolygonShape();
     private final CircleShape formePied = new CircleShape();
     // On respecte le ratio de l'image
-    static final float ratio = 500f * 0.5f / 290f;
+    private static final float ratio = 500f * 0.5f / 290f;
 
     public JoueurP(Vector2 position) {
         super(position);

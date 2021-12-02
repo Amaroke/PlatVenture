@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Timer;
 import com.mygdx.platventure.PlatVenture;
 
 public class EcranPresentation extends ScreenAdapter {
-    final PlatVenture platVenture;
-    final Texture fond;
+    private final PlatVenture platVenture;
+    private final Texture fond;
 
     public EcranPresentation(PlatVenture platVenture) {
         this.platVenture = platVenture;
@@ -19,7 +19,7 @@ public class EcranPresentation extends ScreenAdapter {
 
     @Override
     public void show() {
-        // On joue le son en début de partie
+        //On joue le son en début de partie
         Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/win.ogg"));
         music.play();
         // On attends 3 secondes pour passer à l'écran suivant

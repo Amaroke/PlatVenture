@@ -1,15 +1,16 @@
-package com.mygdx.platventure;
+package com.mygdx.platventure.gestionnaires;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
-public class Niveau {
+public class GestionnaireCreationNiveau {
+
     private final int temps;
     private final char[][] tableau;
     private final int largeur;
     private final int hauteur;
 
-    public Niveau(String niveau) {
+    public GestionnaireCreationNiveau(String niveau) {
         FileHandle file = Gdx.files.internal(niveau);
         String[] tabString = file.readString().split("\\n");
         String[] tabString0 = tabString[0].split(" ");

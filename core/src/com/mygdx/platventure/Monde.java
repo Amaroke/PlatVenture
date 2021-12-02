@@ -16,6 +16,8 @@ import com.mygdx.platventure.elements.gemmes.Gemme2;
 import com.mygdx.platventure.elements.plateformes.PlateformeJ;
 import com.mygdx.platventure.elements.plateformes.PlateformeK;
 import com.mygdx.platventure.elements.plateformes.PlateformeL;
+import com.mygdx.platventure.gestionnaires.GestionnaireCreationNiveau;
+import com.mygdx.platventure.gestionnaires.GestionnaireSons;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +25,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Monde implements Iterable<Element> {
+
+    //TODO Gérer les textures :
+    /*
+    — Les joyaux doivent être animés (séquences Gem1.png et Gem2.png)
+    — Le personnage est représenté par une image fixe selon son action en cours :
+    Inactif Saut Chute Course
+    Idle__000.png Jump__006.png Jump__008.png Run__003.png
+    — D’autres images sont fournies, permettant d’animer les actions du personnage (bonus)
+     */
 
     private ArrayList<Element> elements;
     private World monde;
@@ -32,51 +43,54 @@ public class Monde implements Iterable<Element> {
     private Timer timer;
     private int temps;
     private int score = 0;
-    private Niveau niveau;
+    private final GestionnaireSons gestionnaireSons = new GestionnaireSons();
     private int numeroNiveau;
     private int largeurNiveau;
     private int hauteurNiveau;
-    private final GestionnaireSon gestionnaireSon = new GestionnaireSon();
+    private GestionnaireCreationNiveau gestionnaireCreationNiveau;
 
     public Monde() {
-        creerMonde(1);
+        creerMonde(1, 0);
     }
 
-    private void creerMonde(int numeroNiveau) {
+    private void creerMonde(int numeroNiveau, int score) {
         // On modifie le numéro du niveau actuel
-        this.numeroNiveau = numeroNiveau;
+        this.setNumeroNiveau(numeroNiveau);
+        // On charge le score
+        this.setScore(score);
         // On charge le niveau 1
-        this.setNiveau(new Niveau("levels/level_00" + numeroNiveau + ".txt"));
+        this.setNiveau(new GestionnaireCreationNiveau("levels/level_00" + numeroNiveau + ".txt"));
         // On crée un monde avec une gravité de 10unités/s²
-        monde = new World(new Vector2(0, -10f), true);
+        setMonde(new World(new Vector2(0, -10f), true));
         // On récupère les informations du niveau en cours
-        this.temps = getTempsNiveau();
-        largeurNiveau = getNiveauLargeur();
-        hauteurNiveau = getNiveauHauteur();
+        this.setTemps(getTempsNiveau());
+        setLargeurNiveau(getNiveauLargeur());
+        setHauteurNiveau(getNiveauHauteur());
         // On crée une liste d'éléments présent dans le monde
-        this.elements = new ArrayList<>();
+        this.setElements(new ArrayList<>());
         // On crée tous les éléments resepctivement au tableau extrait du .txt du niveau
-        this.hauteur = niveau.getTableau()[0].length - 1;
-        for (int i = 0; i < niveau.getTableau().length; ++i) {
-            for (int j = 0; j < niveau.getTableau()[i].length; ++j) {
-                creerElement(niveau.getTableau()[i][j], i, j);
+        this.setHauteur(getGestionnaireCreationNiveau().getTableau()[0].length - 1);
+        for (int i = 0; i < getGestionnaireCreationNiveau().getTableau().length; ++i) {
+            for (int j = 0; j < getGestionnaireCreationNiveau().getTableau()[i].length; ++j) {
+                creerElement(getGestionnaireCreationNiveau().getTableau()[i][j], i, j);
             }
         }
         // On lance le timer du niveau
         // On utilise untableau pour modifier dans le timer
-        final int[] tabTemps = {this.temps};
-        timer = new Timer();
+        final int[] tabTemps = {this.getTemps()};
+        setTimer(new Timer());
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
                 tabTemps[0]--;
+                if (tabTemps[0] <= 10) gestionnaireSons.sonAlerte();
                 setTemps(tabTemps[0]);
             }
         };
-        timer.scheduleTask(task, 1f, 1f);
+        getTimer().scheduleTask(task, 1f, 1f);
         // On met en place les collisions
-        this.ecouteurCollision = new EcouteurCollision();
-        this.monde.setContactListener(this.ecouteurCollision);
+        this.setEcouteurCollision(new EcouteurCollision());
+        this.getMonde().setContactListener(this.getEcouteurCollision());
     }
 
     private void creerElement(char lettre, int i, int j) {
@@ -91,32 +105,32 @@ public class Monde implements Iterable<Element> {
             case 'G':
             case 'H':
             case 'I':
-                element = new Brique(new Vector2(i, hauteur - j));
+                element = new Brique(new Vector2(i, getHauteur() - j));
                 break;
             case 'J':
-                element = new PlateformeJ(new Vector2(i, hauteur - j));
+                element = new PlateformeJ(new Vector2(i, getHauteur() - j));
                 break;
             case 'K':
-                element = new PlateformeK(new Vector2(i, hauteur - j));
+                element = new PlateformeK(new Vector2(i, getHauteur() - j));
                 break;
             case 'L':
-                element = new PlateformeL(new Vector2(i, hauteur - j));
+                element = new PlateformeL(new Vector2(i, getHauteur() - j));
                 break;
             case 'P':
-                element = new JoueurP(new Vector2(i, hauteur - j));
-                this.joueur = (JoueurP) element;
+                element = new JoueurP(new Vector2(i, getHauteur() - j));
+                this.setJoueur((JoueurP) element);
                 break;
             case 'W':
-                element = new EauW(new Vector2(i, hauteur - j));
+                element = new EauW(new Vector2(i, getHauteur() - j));
                 break;
             case 'Z':
-                element = new SortieZ(new Vector2(i, hauteur - j));
+                element = new SortieZ(new Vector2(i, getHauteur() - j));
                 break;
             case '1':
-                element = new Gemme1(new Vector2(i, hauteur - j));
+                element = new Gemme1(new Vector2(i, getHauteur() - j));
                 break;
             case '2':
-                element = new Gemme2(new Vector2(i, hauteur - j));
+                element = new Gemme2(new Vector2(i, getHauteur() - j));
                 break;
             default:
                 //On nefait rien, V est inclus.
@@ -125,9 +139,9 @@ public class Monde implements Iterable<Element> {
         if (element != null) {
             // On place les éléments
             element.setBodyDef();
-            element.createBody(monde);
+            element.createBody(getMonde());
             element.setFixture();
-            this.elements.add(element);
+            this.getElements().add(element);
         }
     }
 
@@ -137,58 +151,64 @@ public class Monde implements Iterable<Element> {
             e.setPosition(e.getBody().getPosition());
         }
         // Si le temps arrive à 0, la partie est perdue
-        if (temps == 0) {
+        if (getTemps() == 0) {
             finDePartiePerdue();
         }
         // En cas de contact avec une gemme, on la détruit et on augmente le score
-        if (this.ecouteurCollision.getGemmeEnContact() != null) {
-            this.gestionnaireSon.sonGemme();
-            Element gemme = recupererElement(this.ecouteurCollision.getGemmeEnContact());
+        if (this.getEcouteurCollision().getGemmeEnContact() != null) {
+            this.getGestionnaireSons().sonGemme();
+            Element gemme = recupererElement(this.getEcouteurCollision().getGemmeEnContact());
             supprimerElement(gemme);
-            this.score += ((Gemme) gemme).getPoints();
-            this.monde.destroyBody(this.ecouteurCollision.getGemmeEnContact());
-            this.ecouteurCollision.setGemmeEnContact(null);
+            this.setScore(this.getScore() + ((Gemme) gemme).getPoints());
+            this.getMonde().destroyBody(this.getEcouteurCollision().getGemmeEnContact());
+            this.getEcouteurCollision().setGemmeEnContact(null);
         }
         // En cas de contact avec de l'eau on lance la fin de partie
-        if (this.ecouteurCollision.isEauEnContact()) {
-            this.gestionnaireSon.sonEau();
+        if (this.getEcouteurCollision().isEauEnContact()) {
+            this.getGestionnaireSons().sonEau();
             this.finDePartiePerdue();
         }
         // En cas de sortie de l'écran
-        if (this.joueur.getPosition().x > largeurNiveau || this.joueur.getPosition().x < -1 || this.joueur.getPosition().y > hauteurNiveau || this.joueur.getPosition().y < -1) {
-            if (this.ecouteurCollision.isPancarteDejaEnContact()) {
+        if (this.getJoueur().getPosition().x > getLargeurNiveau() || this.getJoueur().getPosition().x < -1 || this.getJoueur().getPosition().y > getHauteurNiveau() || this.getJoueur().getPosition().y < -1) {
+            if (this.getEcouteurCollision().isPancarteDejaEnContact()) {
                 finDePartieGagne();
             } else {
+                this.getGestionnaireSons().sonPerdu();
                 finDePartiePerdue();
             }
+        }
+
+        // En cas de contact brutal avec une brique
+        if (this.getEcouteurCollision().isContactSonorelateforme()) {
+            this.getGestionnaireSons().sonCollision();
         }
     }
 
     public void finDePartiePerdue() {
-        score = 0;
+        setScore(0);
         // TODO Affichage de l'écran de fin de partie
-        this.gestionnaireSon.sonPerdu();
+        // TODO Gérer l'eau et le son de défaite en même temps
         try {
-            this.timer.clear();
-            this.monde.dispose();
+            this.getTimer().clear();
+            this.getMonde().dispose();
             Thread.sleep(2000);
-            creerMonde(numeroNiveau);
+            creerMonde(getNumeroNiveau(), getScore());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     public void finDePartieGagne() {
-        score = 0;
+        setScore(0);
         // TODO Affichage de l'écran de fin de partie
-        this.gestionnaireSon.sonGagne();
+        this.getGestionnaireSons().sonGagne();
         try {
-            this.timer.clear();
-            this.monde.dispose();
+            this.getTimer().clear();
+            this.getMonde().dispose();
             Thread.sleep(2000);
             // On passe au niveau suivant
             numeroNiveau++;
-            creerMonde(numeroNiveau > 3 ? 1 : numeroNiveau);
+            creerMonde(getNumeroNiveau() > 3 ? 1 : getNumeroNiveau(), getScore());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -198,27 +218,27 @@ public class Monde implements Iterable<Element> {
     @NotNull
     public Iterator<Element> iterator() {
         // On s'en sert pour parcourir les diférentes éléments avec un foreach
-        return this.elements.iterator();
+        return this.getElements().iterator();
     }
 
     public int getTempsNiveau() {
-        return niveau.getTemps();
+        return getGestionnaireCreationNiveau().getTemps();
     }
 
-    public void setNiveau(Niveau niveau) {
-        this.niveau = niveau;
+    public void setNiveau(GestionnaireCreationNiveau gestionnaireCreationNiveau) {
+        this.setGestionnaireCreationNiveau(gestionnaireCreationNiveau);
     }
 
     public int getNiveauLargeur() {
-        return niveau.getLargeur();
+        return getGestionnaireCreationNiveau().getLargeur();
     }
 
     public int getNiveauHauteur() {
-        return niveau.getHauteur();
+        return getGestionnaireCreationNiveau().getHauteur();
     }
 
     public World getWorld() {
-        return monde;
+        return getMonde();
     }
 
     public JoueurP getJoueur() {
@@ -239,7 +259,99 @@ public class Monde implements Iterable<Element> {
     }
 
     public void supprimerElement(Element e) {
-        elements.remove(e);
+        getElements().remove(e);
+    }
+
+    public ArrayList<Element> getElements() {
+        return elements;
+    }
+
+    public void setElements(ArrayList<Element> elements) {
+        this.elements = elements;
+    }
+
+    public World getMonde() {
+        return monde;
+    }
+
+    public void setMonde(World monde) {
+        this.monde = monde;
+    }
+
+    public int getHauteur() {
+        return hauteur;
+    }
+
+    public void setHauteur(int hauteur) {
+        this.hauteur = hauteur;
+    }
+
+    public EcouteurCollision getEcouteurCollision() {
+        return ecouteurCollision;
+    }
+
+    public void setEcouteurCollision(EcouteurCollision ecouteurCollision) {
+        this.ecouteurCollision = ecouteurCollision;
+    }
+
+    public void setJoueur(JoueurP joueur) {
+        this.joueur = joueur;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public int getTemps() {
+        return temps;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public GestionnaireCreationNiveau getGestionnaireCreationNiveau() {
+        return gestionnaireCreationNiveau;
+    }
+
+    public void setGestionnaireCreationNiveau(GestionnaireCreationNiveau gestionnaireCreationNiveau) {
+        this.gestionnaireCreationNiveau = gestionnaireCreationNiveau;
+    }
+
+    public int getNumeroNiveau() {
+        return numeroNiveau;
+    }
+
+    public void setNumeroNiveau(int numeroNiveau) {
+        this.numeroNiveau = numeroNiveau;
+    }
+
+    public int getLargeurNiveau() {
+        return largeurNiveau;
+    }
+
+    public void setLargeurNiveau(int largeurNiveau) {
+        this.largeurNiveau = largeurNiveau;
+    }
+
+    public int getHauteurNiveau() {
+        return hauteurNiveau;
+    }
+
+    public void setHauteurNiveau(int hauteurNiveau) {
+        this.hauteurNiveau = hauteurNiveau;
+    }
+
+    public GestionnaireSons getGestionnaireSons() {
+        return gestionnaireSons;
     }
 }
 
