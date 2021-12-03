@@ -43,6 +43,8 @@ public class Monde implements Iterable<Element> {
     private Timer timer;
     private int temps;
     private int score = 0;
+    private boolean gagne;
+    private boolean perdu;
     private boolean entrainDePerdre;
     private final GestionnaireSons gestionnaireSons = new GestionnaireSons();
     private int numeroNiveau;
@@ -56,6 +58,8 @@ public class Monde implements Iterable<Element> {
 
     private void creerMonde(int numeroNiveau, int score) {
         this.entrainDePerdre = false;
+        gagne = false;
+        perdu = false;
         // On modifie le numéro du niveau actuel
         this.setNumeroNiveau(numeroNiveau);
         // On charge le score
@@ -189,6 +193,7 @@ public class Monde implements Iterable<Element> {
     }
 
     public void finDePartiePerdue() {
+        perdu = true;
         setScore(0);
         entrainDePerdre = true;
         // TODO Affichage de l'écran de fin de partie
@@ -205,19 +210,18 @@ public class Monde implements Iterable<Element> {
     }
 
     public void finDePartieGagne() {
-        setScore(0);
+        gagne = true;
         // TODO Affichage de l'écran de fin de partie
         this.getGestionnaireSons().sonGagne();
-        try {
-            this.getTimer().clear();
-            this.getMonde().dispose();
-            Thread.sleep(2000);
-            // On passe au niveau suivant
-            numeroNiveau++;
-            creerMonde(getNumeroNiveau() > 3 ? 1 : getNumeroNiveau(), getScore());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.getTimer().clear();
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                getMonde().dispose();
+                numeroNiveau++;
+                creerMonde(getNumeroNiveau() > 3 ? 1 : getNumeroNiveau(), getScore());
+            }
+        }, 2);
     }
 
     @Override
@@ -358,6 +362,14 @@ public class Monde implements Iterable<Element> {
 
     public GestionnaireSons getGestionnaireSons() {
         return gestionnaireSons;
+    }
+
+    public boolean isGagne() {
+        return gagne;
+    }
+
+    public boolean isPerdu() {
+        return perdu;
     }
 }
 

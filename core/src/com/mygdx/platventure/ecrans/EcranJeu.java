@@ -2,8 +2,12 @@ package com.mygdx.platventure.ecrans;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -11,7 +15,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.platventure.Monde;
 import com.mygdx.platventure.PlatVenture;
 import com.mygdx.platventure.ecouteurs.EcouteurJoueur;
+import com.mygdx.platventure.ecouteurs.UserData;
 import com.mygdx.platventure.elements.Element;
+import com.mygdx.platventure.elements.gemmes.Gemme;
 
 public class EcranJeu extends ScreenAdapter {
 
@@ -24,11 +30,15 @@ public class EcranJeu extends ScreenAdapter {
     private final Box2DDebugRenderer debugRenderer;
     private final EcouteurJoueur ecouteurJoueur = new EcouteurJoueur();
 
+    private final OrthographicCamera cameraTexte;
+    private BitmapFont bitmapfont;
+
 
     public EcranJeu(PlatVenture platVenture) {
         this.platVenture = platVenture;
         this.font = new Texture("images/Back.png");
         this.platVenture.setMonde(new Monde());
+        chargerFont();
 
         // On définit la caméra
         camera = new OrthographicCamera();
@@ -36,10 +46,30 @@ public class EcranJeu extends ScreenAdapter {
         vp.apply();
         camera.update();
 
+        cameraTexte = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        chargerFont();
+
+
         // On définit l'écran de debug
         debugRenderer = new Box2DDebugRenderer();
         // On définit les controles du joueurs
         Gdx.input.setInputProcessor(this.ecouteurJoueur);
+    }
+
+    //chargerFont
+    private void chargerFont() {
+        FreeTypeFontGenerator freeTypeFontGenerator = new
+                FreeTypeFontGenerator(Gdx.files.internal("fonts/Comic_Sans_MS_Bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter freeTypeFontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        freeTypeFontParameter.size = (int) ((60f * Gdx.graphics.getWidth()) / 1024f);
+        freeTypeFontParameter.color = Color.YELLOW;
+        freeTypeFontParameter.borderColor = Color.BLACK;
+        freeTypeFontParameter.borderWidth = ((3f * Gdx.graphics.getWidth()) / 1024f);
+
+        bitmapfont = freeTypeFontGenerator.generateFont(freeTypeFontParameter);
+
+        freeTypeFontGenerator.dispose();
     }
 
     @Override
@@ -68,14 +98,27 @@ public class EcranJeu extends ScreenAdapter {
         } else {
             platVenture.getListeAff().draw(this.font, 0, 0, platVenture.getMonde().getNiveauLargeur(), platVenture.getMonde().getNiveauHauteur());
             for (Element e : this.platVenture.getMonde().getElements()) {
-                if (e.getTexture() != null) {
-                    if (e.estJoueur()) {
-                        platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x + 0.25f, e.getPosition().y, e.getLargeur(), e.getHauteur());
-                    } else {
-                        platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                if (e.getBody().getUserData() == UserData.GEMME) {
+                    TextureRegion t = new TextureRegion((TextureRegion) (((Gemme) e).getAnimation().getKeyFrame(0.2f, true)));
+                    platVenture.getListeAff().draw(t, e.getPosition().x + 0.25f, e.getPosition().y + 0.25f, 0.5f, 0.5f);
+                } else {
+                    if (e.getTexture() != null) {
+                        if (e.estJoueur()) {
+                            platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x + 0.25f, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                        } else {
+                            platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                        }
                     }
-
                 }
+            }
+            platVenture.getListeAff().setProjectionMatrix(cameraTexte.combined);
+            //On affiche le texte sur la camera
+            bitmapfont.draw(platVenture.getListeAff(), "Score : " + platVenture.getMonde().getScore(), camera.position.x + cameraTexte.viewportWidth / 2 - 7 - (int) (7 * platVenture.getMonde().getScore() / 10f), camera.position.y + cameraTexte.viewportHeight / 2 - 7, 0, 0, false);
+            bitmapfont.draw(platVenture.getListeAff(), "" + platVenture.getMonde().getTemps(), camera.position.x, camera.position.y + cameraTexte.viewportHeight / 2 - 7, 0, 0, false);
+            if (platVenture.getMonde().isGagne()) {
+                bitmapfont.draw(platVenture.getListeAff(), "Bravo :-)", camera.position.x + camera.viewportWidth / 2, camera.position.y + camera.viewportHeight / 2, 0, 0, false);
+            } else if (platVenture.getMonde().isPerdu()) {
+                bitmapfont.draw(platVenture.getListeAff(), "Dommage :-/", camera.position.x + camera.viewportWidth / 2, camera.position.y + camera.viewportHeight / 2, 0, 0, false);
             }
         }
         platVenture.getListeAff().end();
