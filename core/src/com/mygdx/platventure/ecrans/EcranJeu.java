@@ -17,28 +17,28 @@ import com.mygdx.platventure.PlatVenture;
 import com.mygdx.platventure.ecouteurs.EcouteurJoueur;
 import com.mygdx.platventure.ecouteurs.UserData;
 import com.mygdx.platventure.elements.Element;
+import com.mygdx.platventure.elements.JoueurP;
 import com.mygdx.platventure.elements.gemmes.Gemme;
 
 public class EcranJeu extends ScreenAdapter {
 
     final private PlatVenture platVenture;
-    final private Texture font;
+    final private Texture texture;
 
     private final OrthographicCamera camera;
     private final FitViewport vp;
+    private final OrthographicCamera cameraTexte;
+    private float tempsEntreRenderer = 0;
 
     private final Box2DDebugRenderer debugRenderer;
+
     private final EcouteurJoueur ecouteurJoueur = new EcouteurJoueur();
-
-    private final OrthographicCamera cameraTexte;
     private BitmapFont bitmapfont;
-
 
     public EcranJeu(PlatVenture platVenture) {
         this.platVenture = platVenture;
-        this.font = new Texture("images/Back.png");
+        this.texture = new Texture("images/Back.png");
         this.platVenture.setMonde(new Monde());
-        chargerFont();
 
         // On définit la caméra
         camera = new OrthographicCamera();
@@ -46,7 +46,9 @@ public class EcranJeu extends ScreenAdapter {
         vp.apply();
         camera.update();
 
+        // On définit la caméra pour les textes
         cameraTexte = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        // On charge les polices de texte.
         chargerFont();
 
 
@@ -56,19 +58,20 @@ public class EcranJeu extends ScreenAdapter {
         Gdx.input.setInputProcessor(this.ecouteurJoueur);
     }
 
-    //chargerFont
     private void chargerFont() {
-        FreeTypeFontGenerator freeTypeFontGenerator = new
-                FreeTypeFontGenerator(Gdx.files.internal("fonts/Comic_Sans_MS_Bold.ttf"));
+        // On récupère la police et on applique des paramètres
+        FreeTypeFontGenerator freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Comic_Sans_MS_Bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter freeTypeFontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
-        freeTypeFontParameter.size = (int) ((60f * Gdx.graphics.getWidth()) / 1024f);
+        freeTypeFontParameter.size = (int) (60f * Gdx.graphics.getWidth() / 1024f);
         freeTypeFontParameter.color = Color.YELLOW;
         freeTypeFontParameter.borderColor = Color.BLACK;
-        freeTypeFontParameter.borderWidth = ((3f * Gdx.graphics.getWidth()) / 1024f);
+        freeTypeFontParameter.borderWidth = (3f * Gdx.graphics.getWidth() / 1024f);
 
+        // On génère notre police
         bitmapfont = freeTypeFontGenerator.generateFont(freeTypeFontParameter);
 
+        // On libère le générateur
         freeTypeFontGenerator.dispose();
     }
 
@@ -89,32 +92,63 @@ public class EcranJeu extends ScreenAdapter {
         // On définit le step du monde
         platVenture.getMonde().getWorld().step(Gdx.graphics.getDeltaTime(), 6, 2);
         // On update la caméra
+        if (this.platVenture.getMonde().getNiveauLargeur() < camera.viewportWidth) {
+            this.camera.position.x = camera.viewportWidth / 2f - this.platVenture.getMonde().getNiveauLargeur() / 2f;
+            this.camera.position.y = this.platVenture.getMonde().getNiveauHauteur() / 2f;
+        }
         this.centrerCameraJoueur();
         platVenture.getListeAff().setProjectionMatrix(camera.combined);
         platVenture.getListeAff().begin();
-        //On affiche le mode de debug
+        //On affiche le mode de debug s'il est actif
         if (this.ecouteurJoueur.isDebugActif()) {
             debugRenderer.render(platVenture.getMonde().getWorld(), camera.combined);
         } else {
-            platVenture.getListeAff().draw(this.font, 0, 0, platVenture.getMonde().getNiveauLargeur(), platVenture.getMonde().getNiveauHauteur());
+            // On dessine le fond
+            platVenture.getListeAff().draw(this.texture, 0, 0, platVenture.getMonde().getNiveauLargeur(), platVenture.getMonde().getNiveauHauteur());
+            // On affiche les différents éléments du jeu
             for (Element e : this.platVenture.getMonde().getElements()) {
+                // On gère les animations des gemmes
                 if (e.getBody().getUserData() == UserData.GEMME) {
-                    TextureRegion t = new TextureRegion((TextureRegion) (((Gemme) e).getAnimation().getKeyFrame(0.2f, true)));
+                    tempsEntreRenderer += Gdx.graphics.getDeltaTime();
+                    TextureRegion t = new TextureRegion((TextureRegion) (((Gemme) e).getAnimation().getKeyFrame(tempsEntreRenderer, true)));
                     platVenture.getListeAff().draw(t, e.getPosition().x + 0.25f, e.getPosition().y + 0.25f, 0.5f, 0.5f);
                 } else {
                     if (e.getTexture() != null) {
                         if (e.estJoueur()) {
-                            platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x + 0.25f, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                            if (e.getBody().getLinearVelocity().y < -0.01 || e.getBody().getLinearVelocity().y > 0.01) {
+                                e.setTexture(((JoueurP) e).getTextureJump());
+                            } else if (e.getBody().getLinearVelocity().x < -0.1 || e.getBody().getLinearVelocity().x > 0.1) {
+                                e.setTexture(((JoueurP) e).getTextureRun());
+                            } else {
+                                e.setTexture(((JoueurP) e).getTextureIdle());
+                            }
+                            if (e.getBody().getLinearVelocity().x < -0.1) {
+                                platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x + 0.25f + e.getLargeur(), e.getPosition().y, -e.getLargeur(), e.getHauteur());
+                            } else {
+                                platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x + 0.25f, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                            }
                         } else {
-                            platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                            // On oriente la sortie en fonction de son emplacement
+                            if (e.getBody().getUserData() == UserData.SORTIEZ) {
+                                if (e.getBody().getPosition().x < 2) {
+                                    platVenture.getListeAff().draw(e.getTexture(), e.getBody().getPosition().x + e.getLargeur(), e.getPosition().y - 0.25f, -e.getLargeur(), e.getHauteur() + 0.25f);
+                                } else {
+                                    platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x, e.getPosition().y - 0.25f, e.getLargeur(), e.getHauteur() + 0.25f);
+                                }
+                            } else {
+                                platVenture.getListeAff().draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getLargeur(), e.getHauteur());
+                            }
                         }
                     }
                 }
             }
             platVenture.getListeAff().setProjectionMatrix(cameraTexte.combined);
             //On affiche le texte sur la camera
-            bitmapfont.draw(platVenture.getListeAff(), "Score : " + platVenture.getMonde().getScore(), camera.position.x + cameraTexte.viewportWidth / 2 - 7 - (int) (7 * platVenture.getMonde().getScore() / 10f), camera.position.y + cameraTexte.viewportHeight / 2 - 7, 0, 0, false);
+            // Le score
+            bitmapfont.draw(platVenture.getListeAff(), "Score : " + platVenture.getMonde().getScore(), camera.position.x + cameraTexte.viewportWidth / 2 - 20 - (int) (7 * platVenture.getMonde().getScore() / 10f), camera.position.y + cameraTexte.viewportHeight / 2 - 10, 0, 0, false);
+            // Le timer
             bitmapfont.draw(platVenture.getListeAff(), "" + platVenture.getMonde().getTemps(), camera.position.x, camera.position.y + cameraTexte.viewportHeight / 2 - 7, 0, 0, false);
+            // Les textes en cas de victoire ou défaite
             if (platVenture.getMonde().isGagne()) {
                 bitmapfont.draw(platVenture.getListeAff(), "Bravo :-)", camera.position.x + camera.viewportWidth / 2, camera.position.y + camera.viewportHeight / 2, 0, 0, false);
             } else if (platVenture.getMonde().isPerdu()) {
@@ -142,23 +176,25 @@ public class EcranJeu extends ScreenAdapter {
         float positionJoueurX = this.platVenture.getMonde().getJoueur().getPosition().x;
         float positionJoueurY = this.platVenture.getMonde().getJoueur().getPosition().y;
         // Si le joueur est trop dans le haut de la caméra et qu'on dépasse pas la hauteur du niveau
-        if (positionJoueurY > camera.position.y && (camera.position.y + camera.viewportHeight / 2) < this.platVenture.getMonde().getNiveauHauteur()) {
-            // On déplace de 0.06 pour que ce soit fluide, comme dans la vidéo
-            camera.position.set(new Vector2(camera.position.x, camera.position.y + 0.06f), 0);
-        }
-        // Si le joueur est trop dans le bas de la caméra et qu'on dépasse pas la largeur du niveau
-        if (positionJoueurY < camera.position.y && camera.position.y > camera.viewportHeight / 2f) {
-            camera.position.set(new Vector2(camera.position.x, camera.position.y - 0.06f), 0);
-        }
-        // L'inverse des deux précédents
-        // On utilsie -2 et +2 pour que même au centre de l'écran le joueur ait une zone de manoeuvre horizontale
-        if (positionJoueurX > camera.position.x + 2 && (camera.position.x + camera.viewportWidth / 2) < this.platVenture.getMonde().getNiveauLargeur()) {
-            camera.position.set(new Vector2(camera.position.x + 0.06f, camera.position.y), 0);
-        }
-        if (positionJoueurX < camera.position.x - 2 && camera.position.x > 16 / 2f) {
-            camera.position.set(new Vector2(camera.position.x - 0.06f, camera.position.y), 0);
+        if (this.platVenture.getMonde().isAuDebut()) {
+            camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+            this.platVenture.getMonde().setAuDebut(false);
+        } else {
+            if (positionJoueurY > camera.position.y && (camera.position.y + camera.viewportHeight / 2) < this.platVenture.getMonde().getNiveauHauteur()) {
+                camera.position.set(new Vector2(camera.position.x, positionJoueurY), 0);
+            }
+            // Si le joueur est trop dans le bas de la caméra et qu'on dépasse pas la largeur du niveau
+            if (positionJoueurY < camera.position.y && camera.position.y > camera.viewportHeight / 2f) {
+                camera.position.set(new Vector2(camera.position.x, positionJoueurY), 0);
+            }
+            // L'inverse des deux précédents
+            if (positionJoueurX > camera.position.x && (camera.position.x + camera.viewportWidth / 2) < this.platVenture.getMonde().getNiveauLargeur()) {
+                camera.position.set(new Vector2(positionJoueurX, camera.position.y), 0);
+            }
+            if (positionJoueurX < camera.position.x && camera.position.x > 16 / 2f) {
+                camera.position.set(new Vector2(positionJoueurX, camera.position.y), 0);
+            }
         }
         camera.update();
     }
-
 }

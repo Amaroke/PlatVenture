@@ -1,0 +1,232 @@
+@startuml
+class com.mygdx.platventure.elements.Brique {
+- PolygonShape forme
+- float densite
+- float restitution
+- float friction
++ void setBodyDef()
++ void setFixture()
+}
+class com.mygdx.platventure.PlatVenture {
+- SpriteBatch listeAff
++ void create()
++ void dispose()
++ SpriteBatch getListeAff()
++ Monde getMonde()
++ void setMonde(Monde)
+}
+abstract class com.mygdx.platventure.elements.Element {
+# Vector2 position
+# Body body
+# BodyDef bodyDef
+# Texture texture
+# float hauteur
+# float largeur
++ {abstract}void setBodyDef()
++ {abstract}void setFixture()
++ void createBody(World)
++ Vector2 getPosition()
++ Body getBody()
++ void setPosition(Vector2)
++ Texture getTexture()
++ void setTexture(Texture)
++ float getHauteur()
++ float getLargeur()
++ boolean estJoueur()
+}
+class com.mygdx.platventure.ecouteurs.EcouteurJoueur {
+- {static} int hauteurSaut
+- Vector2 deplacement
+- boolean debugActif
++ boolean keyDown(int)
++ boolean keyUp(int)
++ boolean keyTyped(char)
++ boolean touchDown(int,int,int,int)
++ boolean touchUp(int,int,int,int)
++ boolean touchDragged(int,int,int)
++ boolean mouseMoved(int,int)
++ boolean scrolled(float,float)
++ Vector2 getDeplacement()
++ boolean isDebugActif()
+}
+class com.mygdx.platventure.gestionnaires.GestionnaireSons {
+- Sound alert
+- Sound collision
+- Sound gem
+- Sound loose
+- Sound plouf
+- Sound win
++ void sonAlerte()
++ void sonCollision()
++ void sonGemme()
++ void sonPerdu()
++ void sonEau()
++ void sonGagne()
+}
+abstract class com.mygdx.platventure.elements.gemmes.Gemme {
+# CircleShape forme
+- Animation animation
++ CircleShape getForme()
++ {abstract}int getPoints()
++ Animation getAnimation()
+}
+class com.mygdx.platventure.elements.EauW {
+- PolygonShape forme
++ void setBodyDef()
++ void setFixture()
+}
+class com.mygdx.platventure.elements.gemmes.Gemme1 {
++ int getPoints()
++ void setBodyDef()
++ void setFixture()
+}
+class com.mygdx.platventure.elements.JoueurP {
+- PolygonShape formeTete
+- CircleShape formePied
+- {static} float ratio
+- Texture textureIdle
+- Texture textureRun
+- Texture textureJump
++ void setBodyDef()
++ void setFixture()
++ void setMouvevement(Vector2)
++ boolean estJoueur()
++ Texture getTextureIdle()
++ Texture getTextureRun()
++ Texture getTextureJump()
+}
+class com.mygdx.platventure.ecrans.EcranPresentation {
+- Texture fond
++ void show()
++ void render(float)
++ void hide()
+}
+class com.mygdx.platventure.ecrans.EcranJeu {
+- Texture texture
+- OrthographicCamera camera
+- FitViewport vp
+- OrthographicCamera cameraTexte
+- float tempsEntreRenderer
+- Box2DDebugRenderer debugRenderer
+- EcouteurJoueur ecouteurJoueur
+- BitmapFont bitmapfont
+- void chargerFont()
++ void show()
++ void render(float)
++ void dispose()
++ void resize(int,int)
++ void centrerCameraJoueur()
+}
+class com.mygdx.platventure.elements.gemmes.Gemme2 {
++ int getPoints()
++ void setBodyDef()
++ void setFixture()
+}
+class com.mygdx.platventure.Monde {
+- World monde
+- Timer timer
+- int temps
+- int score
+- int hauteur
+- int numeroNiveau
+- int largeurNiveau
+- int hauteurNiveau
+- boolean gagne
+- boolean perdu
+- boolean entrainDePerdre
+- boolean auDebut
+- void creerMonde(int,int)
+- void creerElement(char,int,int)
++ void update()
++ void finDePartiePerdue()
++ void finDePartieGagne()
++ Iterator<Element> iterator()
++ int getTempsNiveau()
++ void setNiveau(GestionnaireCreationNiveau)
++ int getNiveauLargeur()
++ int getNiveauHauteur()
++ World getWorld()
++ JoueurP getJoueur()
++ void setTemps(int)
++ Element recupererElement(Body)
++ void supprimerElement(Element)
++ ArrayList<Element> getElements()
++ void setElements(ArrayList<Element>)
++ World getMonde()
++ void setMonde(World)
++ int getHauteur()
++ void setHauteur(int)
++ EcouteurCollision getEcouteurCollision()
++ void setEcouteurCollision(EcouteurCollision)
++ void setJoueur(JoueurP)
++ int getTemps()
++ int getScore()
++ void setScore(int)
++ GestionnaireCreationNiveau getGestionnaireCreationNiveau()
++ void setGestionnaireCreationNiveau(GestionnaireCreationNiveau)
++ int getNumeroNiveau()
++ void setNumeroNiveau(int)
++ int getLargeurNiveau()
++ void setLargeurNiveau(int)
++ int getHauteurNiveau()
++ void setHauteurNiveau(int)
++ GestionnaireSons getGestionnaireSons()
++ boolean isGagne()
++ boolean isPerdu()
++ boolean isAuDebut()
++ void setAuDebut(boolean)
+}
+class com.mygdx.platventure.elements.SortieZ {
+- PolygonShape forme
++ void setBodyDef()
++ void setFixture()
+}
+class com.mygdx.platventure.ecouteurs.EcouteurCollision {
+- Body gemmeEnContact
+- boolean eauEnContact
+- boolean pancarteDejaEnContact
+- boolean contactSonorelateforme
++ void beginContact(Contact)
++ void endContact(Contact)
++ void preSolve(Contact,Manifold)
++ void postSolve(Contact,ContactImpulse)
++ Body getGemmeEnContact()
++ void setGemmeEnContact(Body)
++ boolean isEauEnContact()
++ boolean isPancarteDejaEnContact()
++ boolean isContactSonorelateforme()
++ void setPancarteDejaEnContact(boolean)
+}
+class com.mygdx.platventure.gestionnaires.GestionnaireCreationNiveau {
+- int temps
+- char[][] tableau
+- int largeur
+- int hauteur
++ char[][] getTableau()
++ int getTemps()
++ int getLargeur()
++ int getHauteur()
+}
+
+com.mygdx.platventure.Monde -- "1" com.mygdx.platventure.gestionnaires.GestionnaireCreationNiveau
+com.mygdx.platventure.Monde -- "1" com.mygdx.platventure.gestionnaires.GestionnaireSons
+com.mygdx.platventure.Monde -- "1" com.mygdx.platventure.ecouteurs.EcouteurCollision
+com.mygdx.platventure.Monde -- "1" com.mygdx.platventure.elements.JoueurP
+com.mygdx.platventure.Monde -- "*" com.mygdx.platventure.elements.Element
+com.mygdx.platventure.ecrans.EcranJeu -- "1" com.mygdx.platventure.PlatVenture
+com.mygdx.platventure.ecrans.EcranPresentation -- "1" com.mygdx.platventure.PlatVenture
+com.mygdx.platventure.PlatVenture -- "1" com.mygdx.platventure.Monde
+com.mygdx.platventure.elements.Element <|-- com.mygdx.platventure.elements.Brique
+com.badlogic.gdx.Game <|-- com.mygdx.platventure.PlatVenture
+com.badlogic.gdx.InputProcessor <|.. com.mygdx.platventure.ecouteurs.EcouteurJoueur
+com.mygdx.platventure.elements.Element <|-- com.mygdx.platventure.elements.gemmes.Gemme
+com.mygdx.platventure.elements.Element <|-- com.mygdx.platventure.elements.EauW
+com.mygdx.platventure.elements.gemmes.Gemme <|-- com.mygdx.platventure.elements.gemmes.Gemme1
+com.mygdx.platventure.elements.Element <|-- com.mygdx.platventure.elements.JoueurP
+com.badlogic.gdx.ScreenAdapter <|-- com.mygdx.platventure.ecrans.EcranPresentation
+com.badlogic.gdx.ScreenAdapter <|-- com.mygdx.platventure.ecrans.EcranJeu
+com.mygdx.platventure.elements.gemmes.Gemme <|-- com.mygdx.platventure.elements.gemmes.Gemme2
+com.mygdx.platventure.Iterable <|.. com.mygdx.platventure.Monde
+com.mygdx.platventure.elements.Element <|-- com.mygdx.platventure.elements.SortieZ
+com.badlogic.gdx.physics.box2d.ContactListener <|.. com.mygdx.platventure.ecouteurs.EcouteurCollision
+@enduml

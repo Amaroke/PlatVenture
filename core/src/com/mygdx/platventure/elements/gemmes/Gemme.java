@@ -21,10 +21,11 @@ public abstract class Gemme extends Element {
         // On découpe le sprite
         TextureRegion[][] textureRegions = TextureRegion.split(getTexture(), 56, 56);
         TextureRegion[] sousTextureRegions1 = new TextureRegion[textureRegions.length];
+        // On crée l'animation de la gemme
         for (int i = 0; i < textureRegions.length; i++) {
             sousTextureRegions1[i] = textureRegions[i][0];
         }
-        animation = new Animation<>(0.2f, sousTextureRegions1);
+        animation = new Animation<>(1f, sousTextureRegions1);
     }
 
     public CircleShape getForme() {

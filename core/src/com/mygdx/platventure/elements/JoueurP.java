@@ -1,5 +1,6 @@
 package com.mygdx.platventure.elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -14,6 +15,9 @@ public class JoueurP extends Element {
     private final CircleShape formePied = new CircleShape();
     // On respecte le ratio de l'image
     private static final float ratio = 500f * 0.5f / 290f;
+    private final Texture textureIdle = new Texture(Gdx.files.internal("images/Idle__000.png"));
+    private final Texture textureRun = new Texture(Gdx.files.internal("images/Run__000.png"));
+    private final Texture textureJump = new Texture(Gdx.files.internal("images/Jump__006.png"));
 
     public JoueurP(Vector2 position) {
         super(position, new Texture("images/Idle__000.png"));
@@ -73,5 +77,17 @@ public class JoueurP extends Element {
     @Override
     public boolean estJoueur() {
         return true;
+    }
+
+    public Texture getTextureIdle() {
+        return textureIdle;
+    }
+
+    public Texture getTextureRun() {
+        return textureRun;
+    }
+
+    public Texture getTextureJump() {
+        return textureJump;
     }
 }

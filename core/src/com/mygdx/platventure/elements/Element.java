@@ -44,6 +44,10 @@ public abstract class Element {
         return texture;
     }
 
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
     public float getHauteur() {
         return hauteur;
     }

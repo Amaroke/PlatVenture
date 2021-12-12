@@ -10,6 +10,7 @@ public class DesktopLauncher {
         config.setTitle("PlatVenture");
         // On règle le jeu à 60fps.
         config.setForegroundFPS(60);
+        config.setIdleFPS(60);
         // On fait une fenêtre de 800x400
         config.setWindowedMode(800, 600);
         new Lwjgl3Application(new PlatVenture(), config);

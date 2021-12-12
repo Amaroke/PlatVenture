@@ -26,38 +26,36 @@ import java.util.Iterator;
 
 public class Monde implements Iterable<Element> {
 
-    //TODO Gérer les textures :
-    /*
-    — Les joyaux doivent être animés (séquences Gem1.png et Gem2.png)
-    — Le personnage est représenté par une image fixe selon son action en cours :
-    Inactif Saut Chute Course
-    Idle__000.png Jump__006.png Jump__008.png Run__003.png
-    — D’autres images sont fournies, permettant d’animer les actions du personnage (bonus)
-     */
-
     private ArrayList<Element> elements;
     private World monde;
-    private int hauteur;
+
+    private final GestionnaireSons gestionnaireSons = new GestionnaireSons();
+    private GestionnaireCreationNiveau gestionnaireCreationNiveau;
+
     private EcouteurCollision ecouteurCollision;
     private JoueurP joueur;
+
     private Timer timer;
     private int temps;
     private int score = 0;
-    private boolean gagne;
-    private boolean perdu;
-    private boolean entrainDePerdre;
-    private final GestionnaireSons gestionnaireSons = new GestionnaireSons();
+    private int hauteur;
     private int numeroNiveau;
     private int largeurNiveau;
     private int hauteurNiveau;
-    private GestionnaireCreationNiveau gestionnaireCreationNiveau;
+
+    private boolean gagne;
+    private boolean perdu;
+    private boolean entrainDePerdre;
+    private boolean auDebut;
 
     public Monde() {
-        creerMonde(1, 0);
+        // On commence au niveau 1, on peut éditer 1 pour commencer à un autre niveau
+        creerMonde(3, 0);
     }
 
     private void creerMonde(int numeroNiveau, int score) {
-        this.entrainDePerdre = false;
+        auDebut = true;
+        entrainDePerdre = false;
         gagne = false;
         perdu = false;
         // On modifie le numéro du niveau actuel
@@ -84,7 +82,7 @@ public class Monde implements Iterable<Element> {
         // On lance le timer du niveau
         // On utilise un tableau pour modifier dans le timer
         final int[] tabTemps = {this.getTemps()};
-        setTimer(new Timer());
+        timer = new Timer();
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
@@ -93,7 +91,7 @@ public class Monde implements Iterable<Element> {
                 setTemps(tabTemps[0]);
             }
         };
-        getTimer().scheduleTask(task, 1f, 1f);
+        timer.scheduleTask(task, 1f, 1f);
         // On met en place les collisions
         this.setEcouteurCollision(new EcouteurCollision());
         this.getMonde().setContactListener(this.getEcouteurCollision());
@@ -152,53 +150,57 @@ public class Monde implements Iterable<Element> {
     }
 
     public void update() {
-        // On met à jour la position des éléments dans le monde
-        for (Element e : this) {
-            e.setPosition(e.getBody().getPosition());
-        }
-        // Si le temps arrive à 0, la partie est perdue
-        if (getTemps() == 0) {
-            finDePartiePerdue();
-        }
-        // En cas de contact avec une gemme, on la détruit et on augmente le score
-        if (this.getEcouteurCollision().getGemmeEnContact() != null) {
-            this.getGestionnaireSons().sonGemme();
-            Element gemme = recupererElement(this.getEcouteurCollision().getGemmeEnContact());
-            supprimerElement(gemme);
-            this.setScore(this.getScore() + ((Gemme) gemme).getPoints());
-            this.getMonde().destroyBody(this.getEcouteurCollision().getGemmeEnContact());
-            this.getEcouteurCollision().setGemmeEnContact(null);
-        }
-        // En cas de sortie de l'écran
-        if (!entrainDePerdre) {
-            if (this.getJoueur().getPosition().x > getLargeurNiveau() || this.getJoueur().getPosition().x < -1 || this.getJoueur().getPosition().y > getHauteurNiveau() || this.getJoueur().getPosition().y < -1) {
-                if (this.getEcouteurCollision().isPancarteDejaEnContact()) {
-                    finDePartieGagne();
-                } else {
-                    this.getGestionnaireSons().sonPerdu();
-                    finDePartiePerdue();
+        if (!gagne && !perdu) {
+            // On met à jour la position des éléments dans le monde
+            for (Element e : this) {
+                e.setPosition(e.getBody().getPosition());
+            }
+            // Si le temps arrive à 0, la partie est perdue
+            if (getTemps() == 0) {
+                finDePartiePerdue();
+            }
+            // En cas de contact avec une gemme, on la détruit et on augmente le score
+            if (this.getEcouteurCollision().getGemmeEnContact() != null) {
+                this.getGestionnaireSons().sonGemme();
+                Element gemme = recupererElement(this.getEcouteurCollision().getGemmeEnContact());
+                supprimerElement(gemme);
+                this.setScore(this.getScore() + ((Gemme) gemme).getPoints());
+                this.getMonde().destroyBody(this.getEcouteurCollision().getGemmeEnContact());
+                this.getEcouteurCollision().setGemmeEnContact(null);
+            }
+            // En cas de sortie de l'écran
+            if (!entrainDePerdre) {
+                if (this.getJoueur().getPosition().x > getLargeurNiveau() || this.getJoueur().getPosition().x < -1 || this.getJoueur().getPosition().y > getHauteurNiveau() || this.getJoueur().getPosition().y < -1) {
+                    if (this.getEcouteurCollision().isPancarteDejaEnContact()) {
+                        getEcouteurCollision().setPancarteDejaEnContact(false);
+                        finDePartieGagne();
+                    } else {
+                        this.getGestionnaireSons().sonPerdu();
+                        getEcouteurCollision().setPancarteDejaEnContact(false);
+                        finDePartiePerdue();
+                    }
+                }
+                // En cas de contact avec de l'eau on lance la fin de partie
+                if (this.getEcouteurCollision().isEauEnContact()) {
+                    this.getGestionnaireSons().sonEau();
+                    this.finDePartiePerdue();
                 }
             }
-            // En cas de contact avec de l'eau on lance la fin de partie
-            if (this.getEcouteurCollision().isEauEnContact()) {
-                this.getGestionnaireSons().sonEau();
-                this.finDePartiePerdue();
-            }
-        }
 
-        // En cas de contact brutal avec une brique
-        if (this.getEcouteurCollision().isContactSonorelateforme()) {
-            this.getGestionnaireSons().sonCollision();
+            // En cas de contact brutal avec une brique
+            if (this.getEcouteurCollision().isContactSonorelateforme()) {
+                this.getGestionnaireSons().sonCollision();
+            }
         }
     }
 
     public void finDePartiePerdue() {
+        // Lorsque la partie est perdue, le score retourne à 0 le timer se reset et la partie redémarre après 2 secondes
         perdu = true;
         setScore(0);
         entrainDePerdre = true;
-        // TODO Affichage de l'écran de fin de partie
-        // TODO Gérer l'eau et le son de défaite en même temps
-        this.getTimer().clear();
+        this.timer.stop();
+        this.timer.clear();
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
@@ -210,10 +212,11 @@ public class Monde implements Iterable<Element> {
     }
 
     public void finDePartieGagne() {
+        // Lorsque la partie est gagnée, le score est conservé le timer se reset et la partie redémarre après 2 secondes
         gagne = true;
-        // TODO Affichage de l'écran de fin de partie
         this.getGestionnaireSons().sonGagne();
-        this.getTimer().clear();
+        this.timer.stop();
+        this.timer.clear();
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
@@ -308,14 +311,6 @@ public class Monde implements Iterable<Element> {
         this.joueur = joueur;
     }
 
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public void setTimer(Timer timer) {
-        this.timer = timer;
-    }
-
     public int getTemps() {
         return temps;
     }
@@ -370,6 +365,14 @@ public class Monde implements Iterable<Element> {
 
     public boolean isPerdu() {
         return perdu;
+    }
+
+    public boolean isAuDebut() {
+        return auDebut;
+    }
+
+    public void setAuDebut(boolean auDebut) {
+        this.auDebut = auDebut;
     }
 }
 

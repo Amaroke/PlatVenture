@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.mygdx.platventure.PlatVenture;
 
 public class EcranPresentation extends ScreenAdapter {
+
     private final PlatVenture platVenture;
     private final Texture fond;
 
@@ -42,6 +43,5 @@ public class EcranPresentation extends ScreenAdapter {
 
     @Override
     public void hide() {
-        Gdx.input.setInputProcessor(null);
     }
 }

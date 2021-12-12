@@ -7,13 +7,17 @@ import com.badlogic.gdx.math.Vector2;
 
 public class EcouteurJoueur implements InputProcessor {
 
-    static final int hauteurSaut = 40;
+    private static final int hauteurSaut = 40;
     private final Vector2 deplacement = new Vector2(0f, 0f);
     private boolean debugActif = false;
-    private long appui = 0;
 
     @Override
     public boolean keyDown(int keycode) {
+        // Lors d'un appui sur Echap, le jeu se ferme
+        if (keycode == Input.Keys.ESCAPE) {
+            Gdx.app.exit();
+            return true;
+        }
         // En cas d'appui sur la flèche du haut on saute
         if (keycode == Input.Keys.UP) {
             deplacement.y = hauteurSaut;
@@ -44,6 +48,7 @@ public class EcouteurJoueur implements InputProcessor {
             deplacement.x = 0f;
             return true;
         }
+        // De même pour le saut
         if (keycode == Input.Keys.UP) {
             deplacement.y = 0f;
             return true;
@@ -58,27 +63,31 @@ public class EcouteurJoueur implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // Lors d'un appui sur l'écran tactile, on enregistre le moment de l'appui
-        appui = System.currentTimeMillis();
         // Si on appuie dans la partie droite, on va vers la droite, l'inverse à gauche
-        if (screenX > Gdx.graphics.getWidth() / 2) {
-            this.deplacement.x = 1;
-        } else if (screenX < Gdx.graphics.getWidth() / 2) {
-            this.deplacement.x = -1;
+        if (pointer == 0) {
+            if (screenX > Gdx.graphics.getWidth() / 2) {
+                this.deplacement.x = 1;
+                return true;
+            } else if (screenX < Gdx.graphics.getWidth() / 2) {
+                this.deplacement.x = -1;
+                return true;
+            }
         }
-        // En cas de déplacement horizontal on stop les déplacements verticaux
-        deplacement.y = 0;
+        // Si on appui une deuxième fois sur l'écran, on saute
+        if (pointer == 1) {
+            this.deplacement.y = hauteurSaut;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        // En cas de deux appuis successif, on fait un saut
-        if ((System.currentTimeMillis() - appui) < 100) {
-            this.deplacement.y = hauteurSaut;
+        // Si on relache le premier appui on stop le mouvement latéral
+        if (pointer == 0) {
+            this.deplacement.x = 0;
+            return true;
         }
-        appui = 0;
-        this.deplacement.x = 0;
         return false;
     }
 

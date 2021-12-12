@@ -15,6 +15,7 @@ public class EcouteurCollision implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
+
         // En cas de contact entre le joueur et une gemme
         if (contact.getFixtureA().getBody().getUserData() == UserData.JOUEURP &&
                 contact.getFixtureB().getBody().getUserData() == UserData.GEMME) {
@@ -45,9 +46,6 @@ public class EcouteurCollision implements ContactListener {
         // En cas de contact entre le joueur et une brique à une vitesse élevée
         if (contact.getFixtureA().getBody().getUserData() == UserData.JOUEURP &&
                 contact.getFixtureB().getBody().getUserData() == UserData.BRIQUE && (contact.getFixtureA().getBody().getLinearVelocity().x > 3 || contact.getFixtureA().getBody().getLinearVelocity().y > 3)) {
-            contactSonorelateforme = true;
-        } else if (contact.getFixtureB().getBody().getUserData() == UserData.JOUEURP &&
-                contact.getFixtureA().getBody().getUserData() == UserData.SORTIEZ && (contact.getFixtureB().getBody().getLinearVelocity().x > 3 || contact.getFixtureA().getBody().getLinearVelocity().y > 3)) {
             contactSonorelateforme = true;
         }
     }
@@ -87,5 +85,9 @@ public class EcouteurCollision implements ContactListener {
         boolean res = contactSonorelateforme;
         contactSonorelateforme = false;
         return res;
+    }
+
+    public void setPancarteDejaEnContact(boolean pancarteDejaEnContact) {
+        this.pancarteDejaEnContact = pancarteDejaEnContact;
     }
 }

@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.platventure.ecrans.EcranPresentation;
 
 public class PlatVenture extends Game {
+
     private SpriteBatch listeAff;
     private Monde monde;
-
 
     @Override
     public void create() {
