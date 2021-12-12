@@ -50,7 +50,7 @@ public class Monde implements Iterable<Element> {
 
     public Monde() {
         // On commence au niveau 1, on peut éditer 1 pour commencer à un autre niveau
-        creerMonde(3, 0);
+        creerMonde(1, 0);
     }
 
     private void creerMonde(int numeroNiveau, int score) {
